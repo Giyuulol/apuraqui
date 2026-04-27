@@ -6,8 +6,12 @@ void main() {
   testWidgets('exibe a checklist de documentos', (WidgetTester tester) async {
     await tester.pumpWidget(const ApuraquiApp());
 
-    expect(find.text('Checklist de Documentos'), findsOneWidget);
-    expect(find.text('Prepare-se para votar'), findsOneWidget);
+    expect(find.text('Checklist de Votação'), findsOneWidget);
+    expect(find.text('Checklist de documentos'), findsOneWidget);
+    expect(
+      find.textContaining('O uso de telefone celular é proibido'),
+      findsOneWidget,
+    );
     expect(find.text('Documento oficial com foto'), findsOneWidget);
   });
 
@@ -17,6 +21,6 @@ void main() {
     await tester.tap(find.text('Documento oficial com foto'));
     await tester.pump();
 
-    expect(find.text('1 de 4 itens concluídos'), findsOneWidget);
+    expect(find.text('1 de 4 documentos marcados'), findsOneWidget);
   });
 }
