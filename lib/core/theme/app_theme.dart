@@ -1,31 +1,40 @@
 import 'package:flutter/material.dart';
 
-class AppTheme {
-  static const Color govBrBlue = Color(0xFF1351B4);
-  static const Color govBrGreen = Color(0xFF168821);
-  static const Color govBrYellow = Color(0xFFFFCD07);
-  static const Color neutralBackground = Color(0xFFF8F8F8);
+import 'app_colors.dart';
+import 'app_typography.dart';
 
+class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
+    fontFamily: AppTypography.fontFamilyBase,
+    textTheme: AppTypography.textTheme,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: govBrBlue,
-      primary: govBrBlue,
-      secondary: govBrGreen,
-      tertiary: govBrYellow,
-      surface: Colors.white,
-      surfaceContainerHighest: neutralBackground,
+      seedColor: AppColors.interactionOnLight,
+      primary: AppColors.interactionOnLight,
+      onPrimary: AppColors.readingOnDark,
+      secondary: AppColors.success,
+      onSecondary: AppColors.readingOnDark,
+      tertiary: AppColors.warning,
+      onTertiary: AppColors.readingOnLight,
+      error: AppColors.error,
+      onError: AppColors.readingOnDark,
+      surface: AppColors.surfaceLightPrimary,
+      onSurface: AppColors.readingOnLight,
+      surfaceContainerHighest: AppColors.surfaceLightAlternative,
+      onSurfaceVariant: AppColors.readingOnLight,
     ),
-    scaffoldBackgroundColor: neutralBackground,
+    scaffoldBackgroundColor: AppColors.surfaceLightAlternative,
     appBarTheme: const AppBarTheme(
-      backgroundColor: govBrBlue,
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.interactionOnLight,
+      foregroundColor: AppColors.readingOnDark,
       centerTitle: false,
       elevation: 0,
       titleTextStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
+        fontFamily: AppTypography.fontFamilyBase,
+        color: AppColors.readingOnDark,
+        fontSize: AppTypography.scaleUp02,
+        fontWeight: AppTypography.semiBold,
+        height: AppTypography.lineHeightLow,
       ),
     ),
     cardTheme: CardThemeData(
@@ -34,19 +43,19 @@ class AppTheme {
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: Color(0xFFE0E0E0)),
+        side: const BorderSide(color: AppColors.borderLight),
       ),
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return govBrBlue;
+          return AppColors.interactionOnLight;
         }
 
-        return Colors.white;
+        return AppColors.surfaceLightPrimary;
       }),
-      checkColor: const WidgetStatePropertyAll(Colors.white),
-      side: const BorderSide(color: govBrBlue, width: 1.5),
+      checkColor: const WidgetStatePropertyAll(AppColors.readingOnDark),
+      side: const BorderSide(color: AppColors.interactionOnLight, width: 1.5),
     ),
   );
 }
