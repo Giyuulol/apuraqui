@@ -23,4 +23,17 @@ void main() {
 
     expect(find.text('1 de 4 documentos marcados'), findsOneWidget);
   });
+
+  testWidgets('navega para central de noticias', (WidgetTester tester) async {
+    await tester.pumpWidget(const ApuraquiApp());
+
+    await tester.tap(find.text('Notícias'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Central de Notícias'), findsOneWidget);
+    expect(
+      find.textContaining('Acompanhe notícias e verificações'),
+      findsOneWidget,
+    );
+  });
 }
