@@ -34,6 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_svg: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +57,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/icons/news_section_badge.svg
+    - assets/icons/selected_green.svg
+    - assets/icons/apuraqui_logo.svg
+    - assets/images/image_candidate1.png
+    - assets/images/image_candidate2.png
+    - assets/images/image_candidate3.png
+
+
 
   fonts:
     - family: Rawline
