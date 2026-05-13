@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/app_info_alert.dart';
+import '../../core/widgets/app_header.dart';
 import 'data/checklist_documentos_mock.dart';
 import 'widgets/checklist_documento_tile.dart';
 
@@ -15,8 +15,6 @@ class ChecklistDocumentosPage extends StatefulWidget {
 
 class _ChecklistDocumentosPageState extends State<ChecklistDocumentosPage> {
   final Set<String> _documentosMarcados = {};
-
-  int get _totalMarcados => _documentosMarcados.length;
 
   void _alternarDocumento(String documentoId, bool marcado) {
     setState(() {
@@ -33,48 +31,126 @@ class _ChecklistDocumentosPageState extends State<ChecklistDocumentosPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: const Icon(Icons.checklist),
-        titleSpacing: 4,
-        title: const Text('Checklist de Votação'),
-      ),
+      appBar: const AppHeader(),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: checklistDocumentosMock.length + 2,
-          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             if (index == 0) {
-              return AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Documentos necessários',
-                      style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/selected_green.svg',
+                        width: 48,
+                        height: 48,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Marque os documentos que você já separou para o dia da votação.',
-                      style: textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      '$_totalMarcados de ${checklistDocumentosMock.length} documentos marcados',
-                      style: textTheme.labelLarge,
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Checklist do Eleitor',
+                              style: textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Prepare-se para o dia da eleição',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               );
             }
 
             if (index == 1) {
-              return const AppInfoAlert(
-                message:
-                    'O uso de telefone celular é proibido dentro da cabine de votação. Anote os números em um papel!',
-                boldText: 'proibido',
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF7ED),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFFFEDD4)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DecoratedBox(
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFEDD4),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.warning_amber_rounded,
+                                size: 20,
+                                color: Color(0xFFF54900),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Atenção com o celular!',
+                                  style: textTheme.titleSmall?.copyWith(
+                                    color: const Color(0xFF9F2D00),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text.rich(
+                                  TextSpan(
+                                    text:
+                                        'O uso de telefone celular, máquina fotográfica ou filmadora é ',
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: const Color(0xFFCA3500),
+                                      height: 1.45,
+                                    ),
+                                    children: const [
+                                      TextSpan(
+                                        text: 'rigorosamente proibido',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            ' dentro da cabine de votação. Deixe os equipamentos com o mesário antes de votar.',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
 

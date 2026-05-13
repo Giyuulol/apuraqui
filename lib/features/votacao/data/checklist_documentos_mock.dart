@@ -4,24 +4,24 @@ const checklistDocumentosMock = <ChecklistDocumento>[
   ChecklistDocumento(
     id: 'documento-oficial-foto',
     titulo: 'Documento oficial com foto',
-    descricao: 'RG, CNH, passaporte ou outro documento oficial válido.',
+    descricao: 'RG, CNH, Passaporte, Carteira de Trabalho ou Certificado de Reservista.',
     obrigatorio: true,
   ),
   ChecklistDocumento(
-    id: 'titulo-eleitor',
-    titulo: 'Título de eleitor',
+    id: 'e-titulo',
+    titulo: 'e-Título ou Título Físico',
     descricao:
-        'Ajuda na conferência dos dados, mas pode ser substituído pelo e-Título.',
+        'Se o seu e-Título tiver foto, ele já serve como documento oficial.',
+  ),
+  ChecklistDocumento(
+    id: 'papel-cola',
+    titulo: 'Colinha em papel preenchida',
+    descricao: 'Anotar os números é essencial. O celular fica retido com o mesário!',
   ),
   ChecklistDocumento(
     id: 'local-votacao',
-    titulo: 'Comprovante do local de votação',
-    descricao: 'Use para conferir zona, seção e endereço antes de sair.',
-  ),
-  ChecklistDocumento(
-    id: 'e-titulo',
-    titulo: 'Celular com e-Título instalado',
+    titulo: 'Local de votação confirmado',
     descricao:
-        'Verifique bateria e acesso ao aplicativo antes do dia da votação.',
+        'Verifique sua Zona e Seção para evitar imprevistos de última hora.',
   ),
 ];
