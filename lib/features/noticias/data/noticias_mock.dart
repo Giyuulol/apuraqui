@@ -27,7 +27,7 @@ const fakeNewsItemsMock = <FakeNewsItem>[
         'O TRE-SP confirmou que não houve nenhuma irregularidade. A urna apresentou falha mecânica e foi substituída.',
   ),
   FakeNewsItem(
-    id: '1',
+    id: '2',
     rumor: '"Candidato B vai confiscar poupanças se eleito"',
     status: 'FALSO',
     truth:

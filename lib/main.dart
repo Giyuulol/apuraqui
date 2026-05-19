@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'features/noticias/central_noticias_page.dart';
 import 'features/perfil/candidatos_page.dart';
+import 'features/santinho/santinhos_page.dart';
 import 'features/votacao/checklist_documentos_page.dart';
 
 void main() {
@@ -37,6 +38,7 @@ class _AppHomePageState extends State<AppHomePage> {
     CandidatosPage(),
     ChecklistDocumentosPage(),
     CentralNoticiasPage(),
+    SantinhosPage(),
   ];
 
   @override
@@ -61,6 +63,11 @@ class _AppHomePageState extends State<AppHomePage> {
             icon: Icon(Icons.newspaper_outlined),
             selectedIcon: Icon(Icons.newspaper),
             label: 'Notícias',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.style_outlined),
+            selectedIcon: Icon(Icons.style),
+            label: 'Santinhos',
           ),
         ],
       ),
