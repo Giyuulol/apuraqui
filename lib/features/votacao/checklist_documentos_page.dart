@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/widgets/app_header.dart';
+import 'application/checklist_progress_providers.dart';
 import 'data/checklist_documentos_mock.dart';
 import 'widgets/checklist_documento_tile.dart';
 
-class ChecklistDocumentosPage extends StatefulWidget {
-  const ChecklistDocumentosPage({super.key});
+class ChecklistDocumentosPage extends ConsumerWidget {
+  const ChecklistDocumentosPage({this.onMenuPressed, this.onLogout, super.key});
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
 
   @override
-  State<ChecklistDocumentosPage> createState() =>
-      _ChecklistDocumentosPageState();
-}
-
-class _ChecklistDocumentosPageState extends State<ChecklistDocumentosPage> {
-  final Set<String> _documentosMarcados = {};
-
-  void _alternarDocumento(String documentoId, bool marcado) {
-    setState(() {
-      if (marcado) {
-        _documentosMarcados.add(documentoId);
-      } else {
-        _documentosMarcados.remove(documentoId);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+    final documentosMarcados =
+        ref.watch(checkedDocumentIdsProvider).value ?? {};
 
     return Scaffold(
-      appBar: const AppHeader(),
+      appBar: AppHeader(
+        onMenuPressed: onMenuPressed,
+        onLogoutPressed: onLogout,
+      ),
       body: SafeArea(
         child: ListView.separated(
           padding: const EdgeInsets.all(16),
@@ -158,8 +150,12 @@ class _ChecklistDocumentosPageState extends State<ChecklistDocumentosPage> {
 
             return ChecklistDocumentoTile(
               documento: documento,
-              checked: _documentosMarcados.contains(documento.id),
-              onChanged: (marcado) => _alternarDocumento(documento.id, marcado),
+              checked: documentosMarcados.contains(documento.id),
+              onChanged: (marcado) {
+                ref
+                    .read(checklistProgressRepositoryProvider)
+                    .setChecked(documento.id, checked: marcado);
+              },
             );
           },
         ),

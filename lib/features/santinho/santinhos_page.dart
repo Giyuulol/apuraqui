@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/navigation/app_routes.dart';
 import '../../core/widgets/app_header.dart';
 import '../perfil/data/candidates_mock.dart';
+import 'application/saved_santinhos_providers.dart';
 import 'data/santinhos_mock.dart';
 import 'widgets/santinho_card.dart';
 
-class SantinhosPage extends StatelessWidget {
-  const SantinhosPage({super.key});
+class SantinhosPage extends ConsumerWidget {
+  const SantinhosPage({this.onMenuPressed, this.onLogout, super.key});
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
 
   void _showShareAllModal(BuildContext context) {
     showDialog<void>(
@@ -18,11 +23,15 @@ class SantinhosPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+    final savedIds = ref.watch(savedSantinhoIdsProvider).value ?? {};
 
     return Scaffold(
-      appBar: const AppHeader(),
+      appBar: AppHeader(
+        onMenuPressed: onMenuPressed,
+        onLogoutPressed: onLogout,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
@@ -86,6 +95,12 @@ class SantinhosPage extends StatelessWidget {
                 candidate: candidatesMock.firstWhere(
                   (candidate) => candidate.id == santinhosMock[i].candidateId,
                 ),
+                saved: savedIds.contains(santinhosMock[i].id),
+                onSave: () {
+                  return ref
+                      .read(savedSantinhosRepositoryProvider)
+                      .setSaved(santinhosMock[i].id, saved: true);
+                },
                 onViewProposals: () =>
                     Navigator.of(context).pushNamed(AppRoutes.comparator),
               ),

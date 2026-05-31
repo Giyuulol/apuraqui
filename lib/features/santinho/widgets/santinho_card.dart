@@ -7,12 +7,16 @@ class SantinhoCard extends StatefulWidget {
   const SantinhoCard({
     required this.item,
     required this.candidate,
+    required this.saved,
+    required this.onSave,
     required this.onViewProposals,
     super.key,
   });
 
   final SantinhoItem item;
   final CandidateProfile candidate;
+  final bool saved;
+  final Future<void> Function() onSave;
   final VoidCallback onViewProposals;
 
   @override
@@ -20,7 +24,6 @@ class SantinhoCard extends StatefulWidget {
 }
 
 class _SantinhoCardState extends State<SantinhoCard> {
-  bool _saved = false;
   void _showShareModal() {
     showGeneralDialog<void>(
       context: context,
@@ -209,15 +212,15 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       duration: const Duration(milliseconds: 250),
                       curve: Curves.easeInOut,
                       decoration: BoxDecoration(
-                        color: _saved
+                        color: widget.saved
                             ? const Color(0xFFDCFCE7)
                             : const Color(0xFFF9FAFB),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          if (_saved) return;
-                          setState(() => _saved = true);
+                        onPressed: () async {
+                          if (widget.saved) return;
+                          await widget.onSave();
                         },
                         style: TextButton.styleFrom(
                           minimumSize: const Size.fromHeight(48),
@@ -232,23 +235,25 @@ class _SantinhoCardState extends State<SantinhoCard> {
                           transitionBuilder: (child, animation) =>
                               FadeTransition(opacity: animation, child: child),
                           child: Row(
-                            key: ValueKey(_saved),
+                            key: ValueKey(widget.saved),
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                _saved
+                                widget.saved
                                     ? Icons.check_circle_outline
                                     : Icons.download_outlined,
                                 size: 16,
-                                color: _saved
+                                color: widget.saved
                                     ? const Color(0xFF008236)
                                     : const Color(0xFF364153),
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                _saved ? 'Santinho salvo!' : 'Salvar Santinho',
+                                widget.saved
+                                    ? 'Santinho salvo!'
+                                    : 'Salvar Santinho',
                                 style: textTheme.labelLarge?.copyWith(
-                                  color: _saved
+                                  color: widget.saved
                                       ? const Color(0xFF008236)
                                       : const Color(0xFF364153),
                                   fontWeight: FontWeight.w700,

@@ -13,12 +13,12 @@ O projeto não mantém scaffolding para web ou desktop.
 
 ## Funcionalidades Disponíveis
 
-- Login simulado com validação de formulário.
+- Login demo local com sessão persistida.
 - Perfis de candidatos e planos de governo.
 - Comparador de propostas com dados compartilhados da feature de perfil.
-- Checklist de documentos para votação.
+- Checklist de documentos para votação com persistência local.
 - Central de notícias e verificação de fake news com mocks.
-- Santinhos digitais com ações de salvar, compartilhar e visualizar propostas.
+- Santinhos digitais persistidos com ações de salvar, compartilhar e visualizar propostas.
 - Estados compartilhados para falta de conexão, erro de servidor e lista vazia.
 
 ## Design System
@@ -30,13 +30,34 @@ O app usa uma adaptação do GOV.BR-DS para Flutter:
 - Componentes compartilhados em `lib/core/design_system/`.
 - Composição visual baseada no protótipo do Figma.
 
+## Persistência Local
+
+O app usa Drift sobre SQLite e expõe estado reativo com Riverpod:
+
+- sessão autenticada local;
+- progresso do checklist;
+- santinhos salvos;
+- aba selecionada na navegação principal.
+
+A credencial temporária de demonstração é:
+
+```text
+login: demo@apuraqui.app
+senha: 123456
+```
+
+A senha não é gravada no SQLite.
+
 ## Estrutura
 
 ```text
 lib/
 ├── core/
 │   ├── design_system/
+│   ├── database/
 │   ├── navigation/
+│   ├── preferences/
+│   ├── providers/
 │   └── widgets/
 ├── features/
 │   ├── auth/
@@ -54,6 +75,7 @@ lib/
 git clone https://github.com/Giyuulol/apuraqui.git
 cd apuraqui
 flutter pub get
+dart run build_runner build
 flutter run
 ```
 
@@ -68,6 +90,5 @@ flutter build apk --debug
 
 ## Próximos Passos
 
-- Definir persistência local e gerenciamento de estado com Riverpod.
 - Integrar fontes oficiais e APIs públicas quando os contratos estiverem definidos.
 - Substituir ações de protótipo por integrações reais.

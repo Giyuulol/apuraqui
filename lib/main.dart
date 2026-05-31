@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/design_system/theme/app_theme.dart';
 import 'core/navigation/app_routes.dart';
+import 'core/preferences/app_preferences_providers.dart';
+import 'core/widgets/app_state_view.dart';
+import 'features/auth/application/auth_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/comparador/comparador_propostas_page.dart';
+import 'features/dashboard/dashboard_page.dart';
+import 'features/dashboard/prototype_menu_drawer.dart';
+import 'features/leitor_qr/leitor_qr_page.dart';
+import 'features/local_votacao/local_votacao_page.dart';
 import 'features/noticias/central_noticias_page.dart';
 import 'features/perfil/candidatos_page.dart';
 import 'features/santinho/santinhos_page.dart';
 import 'features/votacao/checklist_documentos_page.dart';
+import 'features/splash/splash_screen.dart';
 
 void main() {
-  runApp(const ApuraquiApp());
+  runApp(const ProviderScope(child: ApuraquiApp()));
 }
 
 class ApuraquiApp extends StatelessWidget {
@@ -22,62 +31,117 @@ class ApuraquiApp extends StatelessWidget {
       title: 'ApurAqui',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LoginScreen(),
-      routes: {
-        AppRoutes.home: (_) => const AppHomePage(),
-        AppRoutes.comparator: (_) => const ComparadorPropostasPage(),
-      },
+      home: const SplashScreen(),
+      routes: {AppRoutes.comparator: (_) => const ComparadorPropostasPage()},
     );
   }
 }
 
-class AppHomePage extends StatefulWidget {
+class AuthGate extends ConsumerWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(sessionProvider)
+        .when(
+          data: (session) {
+            if (session == null) return const LoginScreen();
+            return const AppHomePage();
+          },
+          error: (error, stackTrace) => AppStateView.serverError(
+            onRetry: () => ref.invalidate(sessionProvider),
+          ),
+          loading: () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+        );
+  }
+}
+
+class AppHomePage extends ConsumerStatefulWidget {
   const AppHomePage({super.key});
 
   @override
-  State<AppHomePage> createState() => _AppHomePageState();
+  ConsumerState<AppHomePage> createState() => _AppHomePageState();
 }
 
-class _AppHomePageState extends State<AppHomePage> {
-  int _currentIndex = 0;
+class _AppHomePageState extends ConsumerState<AppHomePage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static const _pages = <Widget>[
-    CandidatosPage(),
-    ChecklistDocumentosPage(),
-    CentralNoticiasPage(),
-    SantinhosPage(),
-  ];
+  void _openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Candidatos',
+  void _selectDestination(int index) {
+    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _confirmLogout() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sair da Conta?'),
+        content: const Text(
+          'Você precisará fazer login novamente para acessar os dados da apuração.',
+        ),
+        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFE10600),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                ref.read(authControllerProvider.notifier).logout();
+              },
+              child: const Text('Sim, quero sair'),
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.checklist_outlined),
-            selectedIcon: Icon(Icons.checklist),
-            label: 'Checklist',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.newspaper_outlined),
-            selectedIcon: Icon(Icons.newspaper),
-            label: 'Notícias',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.style_outlined),
-            selectedIcon: Icon(Icons.style),
-            label: 'Santinhos',
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentIndex = ref.watch(navigationIndexProvider).value ?? 0;
+
+    final pages = <Widget>[
+      DashboardPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      SantinhosPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      ComparadorPropostasPage(
+        onMenuPressed: _openDrawer,
+        onLogout: _confirmLogout,
+      ),
+      LocalVotacaoPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      LeitorQrCodePage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      ChecklistDocumentosPage(
+        onMenuPressed: _openDrawer,
+        onLogout: _confirmLogout,
+      ),
+      CandidatosPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      CentralNoticiasPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+    ];
+
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: PrototypeMenuDrawer(
+        selectedIndex: currentIndex,
+        onDestinationSelected: _selectDestination,
+        onLogoutPressed: _confirmLogout,
+      ),
+      body: IndexedStack(index: currentIndex, children: pages),
     );
   }
 }

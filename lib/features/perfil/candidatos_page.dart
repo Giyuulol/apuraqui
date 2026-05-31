@@ -8,7 +8,10 @@ import 'widgets/candidate_selector_card.dart';
 import 'widgets/government_plan_card.dart';
 
 class CandidatosPage extends StatefulWidget {
-  const CandidatosPage({super.key});
+  const CandidatosPage({this.onMenuPressed, this.onLogout, super.key});
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
 
   @override
   State<CandidatosPage> createState() => _CandidatosPageState();
@@ -23,7 +26,10 @@ class _CandidatosPageState extends State<CandidatosPage> {
     final candidate = candidatesMock[_selectedIndex];
 
     return Scaffold(
-      appBar: const AppHeader(),
+      appBar: AppHeader(
+        onMenuPressed: widget.onMenuPressed,
+        onLogoutPressed: widget.onLogout,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/design_system/components/app_card.dart';
 import '../../core/design_system/tokens/app_colors.dart';
+import '../../core/widgets/app_header.dart';
 import '../perfil/data/candidates_mock.dart';
 import '../perfil/models/candidate_profile.dart';
 
 class ComparadorPropostasPage extends StatefulWidget {
-  const ComparadorPropostasPage({super.key});
+  const ComparadorPropostasPage({this.onMenuPressed, this.onLogout, super.key});
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
 
   @override
   State<ComparadorPropostasPage> createState() =>
@@ -128,73 +132,78 @@ class _ComparadorPropostasPageState extends State<ComparadorPropostasPage> {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Comparador de Propostas')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppHeader(
+        onMenuPressed: widget.onMenuPressed,
+        onLogoutPressed: widget.onLogout,
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Compare candidatos lado a lado',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Troque os candidatos e veja as propostas por categoria.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
               children: [
-                Text(
-                  'Compare candidatos lado a lado',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                Expanded(
+                  child: _CandidateSummaryCard(
+                    candidate: _candidato1,
+                    onTap: () => _abrirSeletorCandidato(slotIndex: 1),
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  'Troque os candidatos e veja as propostas por categoria.',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _CandidateSummaryCard(
+                    candidate: _candidato2,
+                    onTap: () => _abrirSeletorCandidato(slotIndex: 2),
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _CandidateSummaryCard(
-                  candidate: _candidato1,
-                  onTap: () => _abrirSeletorCandidato(slotIndex: 1),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _CandidateSummaryCard(
-                  candidate: _candidato2,
-                  onTap: () => _abrirSeletorCandidato(slotIndex: 2),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Categorias',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              for (final categoria in categories)
-                ChoiceChip(
-                  label: Text(categoria),
-                  selected: _categoria == categoria,
-                  onSelected: (_) => setState(() => _categoria = categoria),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _ProposalComparisonCard(
-            title: _categoria,
-            firstCandidate: _candidato1,
-            secondCandidate: _candidato2,
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              'Categorias',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                for (final categoria in categories)
+                  ChoiceChip(
+                    label: Text(categoria),
+                    selected: _categoria == categoria,
+                    onSelected: (_) => setState(() => _categoria = categoria),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _ProposalComparisonCard(
+              title: _categoria,
+              firstCandidate: _candidato1,
+              secondCandidate: _candidato2,
+            ),
+          ],
+        ),
       ),
     );
   }

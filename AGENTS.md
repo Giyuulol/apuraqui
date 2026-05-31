@@ -23,6 +23,10 @@
 - Reuse a single domain model and mock source across screens. Do not duplicate candidate or proposal data in profile, comparator, or santinho flows.
 - Prefer dependency inversion when business rules depend on storage, APIs, or platform integrations.
 - Introduce abstractions only when they reduce coupling, improve testability, or represent a stable domain concept.
+- Use Drift over SQLite for local persistence and Riverpod for dependency injection and reactive UI state.
+- Keep SQLite access inside `lib/core/database/` and Drift repository adapters. Widgets must consume repositories or providers, never query the database directly.
+- Keep repository interfaces close to their owning feature and use in-memory SQLite in persistence tests.
+- Regenerate `lib/core/database/app_database.g.dart` with `dart run build_runner build` after changing Drift tables.
 
 ## Design System
 

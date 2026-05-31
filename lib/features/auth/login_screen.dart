@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/navigation/app_routes.dart';
+import 'application/auth_providers.dart';
+import 'create_account_screen.dart';
+import 'recover_password_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _rememberMe = false;
   bool _obscurePassword = true;
-  bool _isLoading = false;
-
-  static const Color _primaryGreen = Color(0xFF2E7D5E);
-  static const Color _primaryNavy = Color(0xFF1A2A5E);
 
   @override
   void dispose() {
@@ -33,54 +31,38 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
+    final authenticated = await ref
+        .read(authControllerProvider.notifier)
+        .login(
+          login: _emailController.text,
+          password: _passwordController.text,
+        );
+    if (!mounted || authenticated) return;
 
-    setState(() => _isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Login realizado com sucesso!'),
-        backgroundColor: _primaryGreen,
+        content: Text('Credenciais inválidas. Use o usuário demo.'),
+        backgroundColor: Colors.red,
       ),
     );
-
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    if (!mounted) return;
-
-    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
   }
 
   void _handleForgotPassword() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Esqueci a senha'),
-        content: const Text(
-          'Um link de recuperação será enviado para o seu e-mail cadastrado.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: _primaryGreen)),
-          ),
-        ],
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const RecoverPasswordScreen()));
   }
 
   void _handleCreateAccount() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Redirecionando para criação de conta...'),
-        backgroundColor: _primaryNavy,
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const CreateAccountScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isLoading = ref.watch(authControllerProvider).isLoading;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -200,38 +182,73 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Row(
                               children: [
-                                Checkbox(
-                                  value: _rememberMe,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _rememberMe = value ?? false;
-                                    });
-                                  },
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Checkbox(
+                                    value: false,
+                                    onChanged: (_) {},
+                                  ),
                                 ),
+                                const SizedBox(width: 6),
                                 const Text('Lembrar-me'),
                               ],
                             ),
                             TextButton(
                               onPressed: _handleForgotPassword,
-                              child: const Text('Esqueci a senha'),
+                              child: const Text(
+                                'Esqueci a senha',
+                                style: TextStyle(
+                                  color: Color(0xFF1A2A5E),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         SizedBox(
                           height: 50,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _handleLogin,
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text('Entrar'),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF12A150), Color(0xFF0B4B9A)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromRGBO(11, 75, 154, 0.25),
+                                  blurRadius: 16,
+                                  offset: Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              onPressed: isLoading ? null : _handleLogin,
+                              icon: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.arrow_forward_rounded),
+                              label: Text(
+                                isLoading ? 'Aguarde...' : 'Acessar Sistema',
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -239,9 +256,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextButton(
-                  onPressed: _handleCreateAccount,
-                  child: const Text('Não tem conta? Crie sua conta'),
+                const Row(
+                  children: [
+                    Expanded(child: Divider()),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('ou'),
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: _handleCreateAccount,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0B4B9A),
+                      foregroundColor: Colors.white,
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text('Criar nova conta'),
+                  ),
                 ),
               ],
             ),

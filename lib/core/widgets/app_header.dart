@@ -5,9 +5,10 @@ import '../design_system/tokens/app_colors.dart';
 import '../design_system/tokens/app_radius.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
-  const AppHeader({this.onMenuPressed, super.key});
+  const AppHeader({this.onMenuPressed, this.onLogoutPressed, super.key});
 
   final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogoutPressed;
 
   @override
   Size get preferredSize => const Size.fromHeight(65);
@@ -79,6 +80,15 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
+            if (onLogoutPressed != null)
+              IconButton(
+                onPressed: onLogoutPressed,
+                icon: const Icon(
+                  Icons.logout,
+                  color: AppColors.interactionOnLight,
+                ),
+                tooltip: 'Sair',
+              ),
           ],
         ),
       ),

@@ -9,14 +9,20 @@ import 'widgets/fake_news_check_card.dart';
 import 'widgets/news_card.dart';
 
 class CentralNoticiasPage extends StatelessWidget {
-  const CentralNoticiasPage({super.key});
+  const CentralNoticiasPage({this.onMenuPressed, this.onLogout, super.key});
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: const AppHeader(),
+      appBar: AppHeader(
+        onMenuPressed: onMenuPressed,
+        onLogoutPressed: onLogout,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
