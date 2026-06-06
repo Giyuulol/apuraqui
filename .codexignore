@@ -1,0 +1,10 @@
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+ios/Pods/
+android/.gradle/
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart

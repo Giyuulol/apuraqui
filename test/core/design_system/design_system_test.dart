@@ -1,0 +1,53 @@
+import 'package:apuraqui/core/design_system/components/app_card.dart';
+import 'package:apuraqui/core/design_system/theme/app_theme.dart';
+import 'package:apuraqui/core/design_system/tokens/app_colors.dart';
+import 'package:apuraqui/core/design_system/tokens/app_radius.dart';
+import 'package:apuraqui/core/design_system/tokens/app_spacing.dart';
+import 'package:apuraqui/core/design_system/tokens/app_typography.dart';
+import 'package:apuraqui/core/theme/app_colors.dart' as legacy_colors;
+import 'package:apuraqui/core/widgets/app_card.dart' as legacy_widgets;
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('expoe tokens fundamentais do design system', () {
+    expect(AppSpacing.md, 16);
+    expect(AppRadius.card, 8);
+    expect(AppColors.interactionOnLight, const Color(0xFF1351B4));
+  });
+
+  test('configura o tema GOV.BR-DS adaptado para Flutter', () {
+    expect(AppTheme.lightTheme.useMaterial3, isTrue);
+    final styles = <TextStyle?>[
+      AppTheme.lightTheme.textTheme.displayLarge,
+      AppTheme.lightTheme.textTheme.displayMedium,
+      AppTheme.lightTheme.textTheme.displaySmall,
+      AppTheme.lightTheme.textTheme.headlineLarge,
+      AppTheme.lightTheme.textTheme.headlineMedium,
+      AppTheme.lightTheme.textTheme.headlineSmall,
+      AppTheme.lightTheme.textTheme.titleLarge,
+      AppTheme.lightTheme.textTheme.titleMedium,
+      AppTheme.lightTheme.textTheme.titleSmall,
+      AppTheme.lightTheme.textTheme.bodyLarge,
+      AppTheme.lightTheme.textTheme.bodyMedium,
+      AppTheme.lightTheme.textTheme.bodySmall,
+      AppTheme.lightTheme.textTheme.labelLarge,
+      AppTheme.lightTheme.textTheme.labelMedium,
+      AppTheme.lightTheme.textTheme.labelSmall,
+    ];
+
+    expect(styles.map((style) => style?.fontFamily).toSet(), {
+      AppTypography.fontFamilyBase,
+    });
+  });
+
+  test('preserva imports legados durante a migracao gradual', () {
+    const legacyCard = legacy_widgets.AppCard(child: SizedBox());
+
+    expect(
+      legacy_colors.AppColors.interactionOnLight,
+      AppColors.interactionOnLight,
+    );
+    expect(legacyCard, isA<AppCard>());
+  });
+}
