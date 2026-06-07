@@ -61,7 +61,6 @@ class _SantinhoCardState extends State<SantinhoCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.10),
@@ -104,10 +103,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(height: 6, color: accentColor),
-                  ),
+
                   Positioned(
                     top: 16,
                     left: 16,
@@ -119,9 +115,6 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(0, 0, 0, 0.4),
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: const Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
                       ),
                       child: Text(
                         widget.candidate.cargo.toUpperCase(),
@@ -174,7 +167,6 @@ class _SantinhoCardState extends State<SantinhoCard> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white, width: 3),
                           ),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -267,17 +259,66 @@ class _SantinhoCardState extends State<SantinhoCard> {
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: widget.onViewProposals,
-                      icon: const Icon(Icons.library_books_outlined, size: 16),
-                      label: const Text('Ver Propostas'),
+                    height: 52,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF009B3A), Color(0xFF002776)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 39, 118, 0.26),
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: widget.onViewProposals,
+                        icon: const Icon(Icons.library_books_outlined, size: 18),
+                        label: Text(
+                          'Ver Propostas',
+                          style: textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  TextButton.icon(
-                    onPressed: _showShareModal,
-                    icon: const Icon(Icons.share_outlined, size: 16),
-                    label: const Text('Compartilhar'),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF002776),
+                        side: const BorderSide(color: Color(0xFF002776), width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: _showShareModal,
+                      icon: const Icon(Icons.share_outlined, size: 18),
+                      label: Text(
+                        'Compartilhar',
+                        style: textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF002776),
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

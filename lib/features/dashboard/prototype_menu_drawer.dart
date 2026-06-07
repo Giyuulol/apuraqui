@@ -21,7 +21,6 @@ class PrototypeMenuDrawer extends StatelessWidget {
     _DrawerItem('Checklist de Votação', Icons.check_box_outlined),
     _DrawerItem('Perfis dos Candidatos', Icons.people_alt_outlined),
     _DrawerItem('Central de Notícias', Icons.newspaper_outlined),
-    _DrawerItem('Exceções e Inelegibilidade', Icons.gavel_outlined),
   ];
 
   @override

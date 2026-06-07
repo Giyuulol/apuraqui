@@ -160,7 +160,6 @@ class _ComparadorPropostasPageState extends State<ComparadorPropostasPage> {
                       child: _SelectorCard(
                         candidate: _candidato1,
                         color: c1Color,
-                        chevronRight: true,
                         onTap: () => _abrirSeletorCandidato(slotIndex: 1),
                       ),
                     ),
@@ -169,7 +168,6 @@ class _ComparadorPropostasPageState extends State<ComparadorPropostasPage> {
                       child: _SelectorCard(
                         candidate: _candidato2,
                         color: c2Color,
-                        chevronRight: false,
                         onTap: () => _abrirSeletorCandidato(slotIndex: 2),
                       ),
                     ),
@@ -243,13 +241,11 @@ class _SelectorCard extends StatelessWidget {
     required this.candidate,
     required this.color,
     required this.onTap,
-    required this.chevronRight,
   });
 
   final CandidateProfile candidate;
   final Color color;
   final VoidCallback onTap;
-  final bool chevronRight;
 
   @override
   Widget build(BuildContext context) {
@@ -272,107 +268,110 @@ class _SelectorCard extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              // Faixa colorida no topo
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(height: 4, color: color),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 16, 12, 14),
-                child: Column(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 16, 12, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Avatar + badge chevron
+                Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    // Avatar + badge chevron
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 62,
-                          height: 62,
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: color, width: 2.2),
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              candidate.foto,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                    Icons.person_outline,
-                                    color: color,
-                                    size: 28,
-                                  ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -4,
-                          right: chevronRight ? -4 : null,
-                          left: chevronRight ? null : -4,
-                          child: Container(
-                            width: 24,
-                            height: 24,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 16,
-                              color: Color(0xFF9CA3AF),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      candidate.nome,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
+                      width: 62,
+                      height: 62,
+                      padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
-                        borderRadius: BorderRadius.circular(6),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: color, width: 2.2),
                       ),
-                      child: Text(
-                        '${candidate.numero} • ${candidate.partido.split(' ').first}',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF4B5563),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10.5,
+                      child: ClipOval(
+                        child: Image.asset(
+                          candidate.foto,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(
+                                Icons.person_outline,
+                                color: color,
+                                size: 28,
+                              ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -4,
+                      right: -4,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 16,
+                          color: Color(0xFF9CA3AF),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                Text(
+                  candidate.nome,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF111827),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        candidate.numero,
+                        style: textTheme.labelMedium?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        candidate.partido,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: const Color(0xFF4B5563),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                          height: 1.3,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

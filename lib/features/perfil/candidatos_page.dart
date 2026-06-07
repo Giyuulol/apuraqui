@@ -12,12 +12,15 @@ class CandidatosPage extends StatefulWidget {
     this.onMenuPressed,
     this.onLogout,
     this.onViewProposals,
+    this.initialCandidateId,
     super.key,
   });
 
   final VoidCallback? onMenuPressed;
   final VoidCallback? onLogout;
-  final VoidCallback? onViewProposals;
+  final void Function(String candidateId)? onViewProposals;
+  /// ID do candidato a ser pré-selecionado ao abrir a tela.
+  final String? initialCandidateId;
 
   @override
   State<CandidatosPage> createState() => _CandidatosPageState();
@@ -33,6 +36,12 @@ class _CandidatosPageState extends State<CandidatosPage>
   @override
   void initState() {
     super.initState();
+    // Resolve o índice inicial pelo candidateId, se fornecido
+    final initialId = widget.initialCandidateId;
+    if (initialId != null) {
+      final idx = candidatesMock.indexWhere((c) => c.id == initialId);
+      if (idx != -1) _selectedIndex = idx;
+    }
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 320),
@@ -169,7 +178,7 @@ class _CandidatosPageState extends State<CandidatosPage>
                 onPressed: () {
                   final callback = widget.onViewProposals;
                   if (callback != null) {
-                    callback();
+                    callback(candidate.id);
                     return;
                   }
                   Navigator.of(context).pushNamed(AppRoutes.comparator);
@@ -281,13 +290,7 @@ class _CandidateProfileCard extends StatelessWidget {
                     const SizedBox(height: 64), // espaço da foto transpassada
                   ],
                 ),
-                // Linha de acento no topo
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(height: 4, color: accentColor),
-                ),
+
                 // Foto circular transpassando o banner
                 Positioned(
                   top: 52,

@@ -19,7 +19,7 @@ class LeitorQrCodePage extends ConsumerWidget {
 
   final VoidCallback onMenuPressed;
   final VoidCallback onLogout;
-  final VoidCallback? onViewProposals;
+  final void Function(String candidateId)? onViewProposals;
 
   void _showDemoResult(BuildContext context, WidgetRef ref) {
     final santinho = santinhosMock.first;
@@ -237,16 +237,19 @@ class LeitorQrCodePage extends ConsumerWidget {
                             ),
                             foregroundColor: const Color(0xFF002776),
                           ),
-                          onPressed: () {
+                           onPressed: () {
                             Navigator.of(context).pop();
                             final callback = onViewProposals;
                             if (callback != null) {
-                              callback();
+                              callback(candidate.id);
                               return;
                             }
                             Navigator.of(
                               context,
-                            ).pushNamed(AppRoutes.comparator);
+                            ).pushNamed(
+                              AppRoutes.candidateProfile,
+                              arguments: candidate.id,
+                            );
                           },
                           icon: const Icon(
                             Icons.library_books_outlined,

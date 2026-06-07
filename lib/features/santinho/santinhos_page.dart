@@ -18,7 +18,7 @@ class SantinhosPage extends ConsumerWidget {
 
   final VoidCallback? onMenuPressed;
   final VoidCallback? onLogout;
-  final VoidCallback? onViewProposals;
+  final void Function(String candidateId)? onViewProposals;
 
   void _showShareAllModal(BuildContext context) {
     showDialog<void>(
@@ -109,12 +109,16 @@ class SantinhosPage extends ConsumerWidget {
                       .setSaved(santinhosMock[i].id, saved: !isSaved);
                 },
                 onViewProposals: () {
+                  final candidateId = santinhosMock[i].candidateId;
                   final callback = onViewProposals;
                   if (callback != null) {
-                    callback();
+                    callback(candidateId);
                     return;
                   }
-                  Navigator.of(context).pushNamed(AppRoutes.comparator);
+                  Navigator.of(context).pushNamed(
+                    AppRoutes.candidateProfile,
+                    arguments: candidateId,
+                  );
                 },
               ),
               if (i != santinhosMock.length - 1) const SizedBox(height: 24),

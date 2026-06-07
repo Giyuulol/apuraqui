@@ -10,7 +10,7 @@ import 'features/auth/login_screen.dart';
 import 'features/comparador/comparador_propostas_page.dart';
 import 'features/dashboard/dashboard_page.dart';
 import 'features/dashboard/prototype_menu_drawer.dart';
-import 'features/inelegibilidade/inelegibilidade_page.dart';
+
 import 'features/leitor_qr/leitor_qr_page.dart';
 import 'features/local_votacao/local_votacao_page.dart';
 import 'features/noticias/central_noticias_page.dart';
@@ -33,7 +33,13 @@ class ApuraquiApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),
-      routes: {AppRoutes.comparator: (_) => const ComparadorPropostasPage()},
+      routes: {
+        AppRoutes.comparator: (_) => const ComparadorPropostasPage(),
+        AppRoutes.candidateProfile: (ctx) {
+          final id = ModalRoute.of(ctx)?.settings.arguments as String?;
+          return CandidatosPage(initialCandidateId: id);
+        },
+      },
     );
   }
 }
@@ -69,6 +75,7 @@ class AppHomePage extends ConsumerStatefulWidget {
 class _AppHomePageState extends ConsumerState<AppHomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   static const _comparatorIndex = 2;
+  static const _profileIndex = 6;
 
   void _openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
@@ -82,6 +89,19 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
   void _showDestination(int index) {
     ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index);
   }
+
+  /// Navega para a aba de Perfil pré-selecionando o candidato pelo ID.
+  void _showCandidateProfile(String candidateId) {
+    // Persiste o selectedCandidateId antes de mudar a aba
+    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(_profileIndex);
+    // A CandidatosPage usa initialCandidateId apenas no initState;
+    // usamos uma Key dinâmica para forçar recriação com o novo candidato.
+    setState(() {
+      _pendingCandidateId = candidateId;
+    });
+  }
+
+  String? _pendingCandidateId;
 
   Future<void> _confirmLogout() async {
     final textTheme = Theme.of(context).textTheme;
@@ -227,7 +247,7 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
       SantinhosPage(
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
-        onViewProposals: () => _showDestination(_comparatorIndex),
+        onViewProposals: (candidateId) => _showCandidateProfile(candidateId),
       ),
       ComparadorPropostasPage(
         onMenuPressed: _openDrawer,
@@ -237,19 +257,20 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
       LeitorQrCodePage(
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
-        onViewProposals: () => _showDestination(_comparatorIndex),
+        onViewProposals: (candidateId) => _showCandidateProfile(candidateId),
       ),
       ChecklistDocumentosPage(
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
       ),
       CandidatosPage(
+        key: ValueKey(_pendingCandidateId),
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
-        onViewProposals: () => _showDestination(_comparatorIndex),
+        onViewProposals: (candidateId) => _showDestination(_comparatorIndex),
+        initialCandidateId: _pendingCandidateId,
       ),
       CentralNoticiasPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
-      InelegibilidadePage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
     ];
 
     return Scaffold(
