@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/design_system/theme/app_theme.dart';
 import 'core/navigation/app_routes.dart';
 import 'core/preferences/app_preferences_providers.dart';
-import 'core/widgets/app_state_view.dart';
 import 'features/auth/application/auth_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/comparador/comparador_propostas_page.dart';
@@ -56,9 +55,14 @@ class AuthGate extends ConsumerWidget {
             if (session == null) return const LoginScreen();
             return const AppHomePage();
           },
-          error: (error, stackTrace) => AppStateView.serverError(
-            onRetry: () => ref.invalidate(sessionProvider),
-          ),
+          error: (error, stackTrace) {
+            print('ERRO SESSION PROVIDER: $error');
+            print(stackTrace);
+
+            return Scaffold(
+              body: Center(child: SelectableText('Erro:\n$error')),
+            );
+          },
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
         );
@@ -82,8 +86,10 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
   }
 
   void _selectDestination(int index) {
-    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index);
-    Navigator.of(context).pop();
+    // Aguarda a persistência da preferência antes de fechar a gaveta
+    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index).then((_) {
+      Navigator.of(context).pop();
+    });
   }
 
   void _showDestination(int index) {
