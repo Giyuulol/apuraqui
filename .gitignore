@@ -3,6 +3,16 @@
 *.log
 *.pyc
 *.swp
+.codex/
+.codex/**
+.node-repl-history
+.npm/
+.pnpm-store/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
 .DS_Store
 .atom/
 .build/
@@ -21,7 +31,7 @@ migrate_working_dir/
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
-#.vscode/
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -32,6 +42,12 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+node_modules/
+
+# IDE / generated artifacts from local tooling
+.vscode-test/
+*.orig
+*.rej
 
 # Symbolication related
 app.*.symbols
