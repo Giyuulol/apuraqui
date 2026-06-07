@@ -19,6 +19,7 @@ class CandidatosPage extends StatefulWidget {
   final VoidCallback? onMenuPressed;
   final VoidCallback? onLogout;
   final void Function(String candidateId)? onViewProposals;
+
   /// ID do candidato a ser pré-selecionado ao abrir a tela.
   final String? initialCandidateId;
 
@@ -146,8 +147,7 @@ class _CandidatosPageState extends State<CandidatosPage>
                 scrollDirection: Axis.horizontal,
                 clipBehavior: Clip.none,
                 itemCount: candidatesMock.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(width: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
                 itemBuilder: (context, index) => CandidateSelectorCard(
                   candidate: candidatesMock[index],
                   selected: index == _selectedIndex,

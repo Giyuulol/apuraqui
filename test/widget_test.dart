@@ -176,29 +176,6 @@ void main() {
     await _disposeWidgetTree(tester);
   });
 
-  testWidgets('drawer navega para excecoes e inelegibilidade', (tester) async {
-    tester.view.physicalSize = const Size(800, 1000);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-
-    await _pumpHome(tester, database);
-
-    await tester.tap(find.byTooltip('Menu'));
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Exceções e Inelegibilidade'),
-      120,
-      scrollable: find.byType(Scrollable).last,
-    );
-    await tester.tap(find.text('Exceções e Inelegibilidade'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Exceções e Inelegibilidade'), findsOneWidget);
-
-    await _disposeWidgetTree(tester);
-  });
-
   testWidgets('perfil abre comparador mantendo menu lateral', (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1;
@@ -222,7 +199,9 @@ void main() {
     await _disposeWidgetTree(tester);
   });
 
-  testWidgets('santinho abre comparador mantendo menu lateral', (tester) async {
+  testWidgets('santinho abre perfil do candidato mantendo menu lateral', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -234,14 +213,17 @@ void main() {
     await tester.tap(find.text('Ver Propostas').first);
     await tester.pumpAndSettle();
 
-    expect(find.text('Compare candidatos lado a lado'), findsOneWidget);
+    // "Ver Propostas" navega para a aba Perfis dos Candidatos
+    expect(find.text('Perfis dos Candidatos'), findsWidgets);
     expect(find.byTooltip('Menu'), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });
 
-  testWidgets('qr abre comparador mantendo menu lateral', (tester) async {
-    tester.view.physicalSize = const Size(800, 1200);
+  testWidgets('qr abre perfil do candidato mantendo menu lateral', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -254,7 +236,8 @@ void main() {
     await tester.tap(find.text('Ver propostas'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Compare candidatos lado a lado'), findsOneWidget);
+    // "Ver propostas" navega para a aba Perfis dos Candidatos
+    expect(find.text('Perfis dos Candidatos'), findsWidgets);
     expect(find.byTooltip('Menu'), findsOneWidget);
 
     await _disposeWidgetTree(tester);

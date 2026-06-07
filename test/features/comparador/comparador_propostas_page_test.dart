@@ -7,6 +7,11 @@ void main() {
   testWidgets('comparador reutiliza propostas completas do perfil', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(800, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.lightTheme,

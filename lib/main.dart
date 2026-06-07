@@ -56,8 +56,8 @@ class AuthGate extends ConsumerWidget {
             return const AppHomePage();
           },
           error: (error, stackTrace) {
-            print('ERRO SESSION PROVIDER: $error');
-            print(stackTrace);
+            debugPrint('ERRO SESSION PROVIDER: $error');
+            debugPrint(stackTrace.toString());
 
             return Scaffold(
               body: Center(child: SelectableText('Erro:\n$error')),
@@ -86,8 +86,10 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
   }
 
   void _selectDestination(int index) {
-    // Aguarda a persistência da preferência antes de fechar a gaveta
-    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index).then((_) {
+    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index).then((
+      _,
+    ) {
+      if (!mounted) return;
       Navigator.of(context).pop();
     });
   }
@@ -99,7 +101,9 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
   /// Navega para a aba de Perfil pré-selecionando o candidato pelo ID.
   void _showCandidateProfile(String candidateId) {
     // Persiste o selectedCandidateId antes de mudar a aba
-    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(_profileIndex);
+    ref
+        .read(appPreferencesRepositoryProvider)
+        .saveNavigationIndex(_profileIndex);
     // A CandidatosPage usa initialCandidateId apenas no initState;
     // usamos uma Key dinâmica para forçar recriação com o novo candidato.
     setState(() {

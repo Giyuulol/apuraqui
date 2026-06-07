@@ -6,11 +6,7 @@ import '../perfil/models/candidate_profile.dart';
 
 // ─── Dados de tópicos idênticos ao mock de candidatos ───────────────────────
 class _Topic {
-  const _Topic({
-    required this.id,
-    required this.title,
-    required this.icon,
-  });
+  const _Topic({required this.id, required this.title, required this.icon});
   final String id;
   final String title;
   final IconData icon;
@@ -18,22 +14,14 @@ class _Topic {
 
 const _topics = <_Topic>[
   _Topic(id: 'educacao', title: 'Educação', icon: Icons.school_outlined),
-  _Topic(
-    id: 'economia',
-    title: 'Economia',
-    icon: Icons.payments_outlined,
-  ),
+  _Topic(id: 'economia', title: 'Economia', icon: Icons.payments_outlined),
   _Topic(
     id: 'saude',
     title: 'Saúde Pública',
     icon: Icons.local_hospital_outlined,
   ),
   _Topic(id: 'seguranca', title: 'Segurança', icon: Icons.security_outlined),
-  _Topic(
-    id: 'ambiente',
-    title: 'Meio Ambiente',
-    icon: Icons.park_outlined,
-  ),
+  _Topic(id: 'ambiente', title: 'Meio Ambiente', icon: Icons.park_outlined),
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -106,126 +94,126 @@ class _ComparadorPropostasPageState extends State<ComparadorPropostasPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            // ─── Cabeçalho ─────────────────────────────────────────
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color.fromRGBO(0, 39, 118, 0.10),
-                    borderRadius: BorderRadius.circular(16),
+              // ─── Cabeçalho ─────────────────────────────────────────
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(0, 39, 118, 0.10),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.scale_outlined,
+                      color: Color(0xFF002776),
+                      size: 24,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.scale_outlined,
-                    color: Color(0xFF002776),
-                    size: 24,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          // Preservado para o teste: find.text('Compare candidatos lado a lado')
+                          'Compare candidatos lado a lado',
+                          style: textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF111827),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Toque nos candidatos para alterar',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: const Color(0xFF6B7280),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // ─── Seletor de candidatos (VS) ─────────────────────────
+              Stack(
+                alignment: Alignment.topCenter,
+                clipBehavior: Clip.none,
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        // Preservado para o teste: find.text('Compare candidatos lado a lado')
-                        'Compare candidatos lado a lado',
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: const Color(0xFF111827),
+                      Expanded(
+                        child: _SelectorCard(
+                          candidate: _candidato1,
+                          color: c1Color,
+                          onTap: () => _abrirSeletorCandidato(slotIndex: 1),
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        'Toque nos candidatos para alterar',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF6B7280),
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: _SelectorCard(
+                          candidate: _candidato2,
+                          color: c2Color,
+                          onTap: () => _abrirSeletorCandidato(slotIndex: 2),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // ─── Seletor de candidatos (VS) ─────────────────────────
-            Stack(
-              alignment: Alignment.topCenter,
-              clipBehavior: Clip.none,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SelectorCard(
-                        candidate: _candidato1,
-                        color: c1Color,
-                        onTap: () => _abrirSeletorCandidato(slotIndex: 1),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _SelectorCard(
-                        candidate: _candidato2,
-                        color: c2Color,
-                        onTap: () => _abrirSeletorCandidato(slotIndex: 2),
-                      ),
-                    ),
-                  ],
-                ),
-                // Badge VS
-                Positioned(
-                  top: 20,
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFDF00), Color(0xFFF5B800)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFF8F9FB),
-                        width: 4,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFF5B800).withAlpha(90),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                  // Badge VS
+                  Positioned(
+                    top: 20,
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFFDF00), Color(0xFFF5B800)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'VS',
-                      style: TextStyle(
-                        color: Color(0xFF002776),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13,
-                        letterSpacing: -0.5,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color(0xFFF8F9FB),
+                          width: 4,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFF5B800).withAlpha(90),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'VS',
+                        style: TextStyle(
+                          color: Color(0xFF002776),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-
-            // ─── Lista completa de tópicos ──────────────────────────
-            for (final topic in _topics) ...[
-              _TopicComparisonCard(
-                topic: topic,
-                c1: _candidato1,
-                c2: _candidato2,
-                c1Color: c1Color,
-                c2Color: c2Color,
+                ],
               ),
-              const SizedBox(height: 16),
-            ],
-          ], // children do Column
+              const SizedBox(height: 28),
+
+              // ─── Lista completa de tópicos ──────────────────────────
+              for (final topic in _topics) ...[
+                _TopicComparisonCard(
+                  topic: topic,
+                  c1: _candidato1,
+                  c2: _candidato2,
+                  c1Color: c1Color,
+                  c2Color: c2Color,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ], // children do Column
           ), // Column
         ), // SingleChildScrollView
       ),
@@ -289,12 +277,11 @@ class _SelectorCard extends StatelessWidget {
                         child: Image.asset(
                           candidate.foto,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(
-                                Icons.person_outline,
-                                color: color,
-                                size: 28,
-                              ),
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.person_outline,
+                            color: color,
+                            size: 28,
+                          ),
                         ),
                       ),
                     ),
@@ -463,7 +450,11 @@ class _TopicComparisonCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(topic.icon, color: const Color(0xFF4B5563), size: 20),
+                    child: Icon(
+                      topic.icon,
+                      color: const Color(0xFF4B5563),
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Text(
@@ -753,10 +744,7 @@ class _CandidateSelectorSheet extends StatelessWidget {
                                   candidato.foto,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      Icon(
-                                        Icons.person_outline,
-                                        color: cColor,
-                                      ),
+                                      Icon(Icons.person_outline, color: cColor),
                                 ),
                               ),
                             ),
@@ -831,5 +819,3 @@ class _CandidateSelectorSheet extends StatelessWidget {
     );
   }
 }
-
-

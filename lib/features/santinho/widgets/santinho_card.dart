@@ -286,7 +286,10 @@ class _SantinhoCardState extends State<SantinhoCard> {
                           ),
                         ),
                         onPressed: widget.onViewProposals,
-                        icon: const Icon(Icons.library_books_outlined, size: 18),
+                        icon: const Icon(
+                          Icons.library_books_outlined,
+                          size: 18,
+                        ),
                         label: Text(
                           'Ver Propostas',
                           style: textTheme.labelLarge?.copyWith(
@@ -304,7 +307,10 @@ class _SantinhoCardState extends State<SantinhoCard> {
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF002776),
-                        side: const BorderSide(color: Color(0xFF002776), width: 2),
+                        side: const BorderSide(
+                          color: Color(0xFF002776),
+                          width: 2,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),

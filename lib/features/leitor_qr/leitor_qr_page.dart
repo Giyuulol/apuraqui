@@ -237,16 +237,14 @@ class LeitorQrCodePage extends ConsumerWidget {
                             ),
                             foregroundColor: const Color(0xFF002776),
                           ),
-                           onPressed: () {
+                          onPressed: () {
                             Navigator.of(context).pop();
                             final callback = onViewProposals;
                             if (callback != null) {
                               callback(candidate.id);
                               return;
                             }
-                            Navigator.of(
-                              context,
-                            ).pushNamed(
+                            Navigator.of(context).pushNamed(
                               AppRoutes.candidateProfile,
                               arguments: candidate.id,
                             );
