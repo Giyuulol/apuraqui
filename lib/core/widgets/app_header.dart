@@ -70,7 +70,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'AO VIVO',
+                    'Demo',
                     style: textTheme.labelSmall?.copyWith(
                       color: AppColors.error,
                       fontWeight: FontWeight.w700,

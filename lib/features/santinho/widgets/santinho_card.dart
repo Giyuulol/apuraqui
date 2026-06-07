@@ -8,7 +8,7 @@ class SantinhoCard extends StatefulWidget {
     required this.item,
     required this.candidate,
     required this.saved,
-    required this.onSave,
+    required this.onToggleSave,
     required this.onViewProposals,
     super.key,
   });
@@ -16,7 +16,7 @@ class SantinhoCard extends StatefulWidget {
   final SantinhoItem item;
   final CandidateProfile candidate;
   final bool saved;
-  final Future<void> Function() onSave;
+  final Future<void> Function() onToggleSave;
   final VoidCallback onViewProposals;
 
   @override
@@ -219,8 +219,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          if (widget.saved) return;
-                          await widget.onSave();
+                          await widget.onToggleSave();
                         },
                         style: TextButton.styleFrom(
                           minimumSize: const Size.fromHeight(48),

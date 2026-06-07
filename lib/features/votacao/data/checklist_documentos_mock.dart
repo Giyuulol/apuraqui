@@ -27,3 +27,40 @@ const checklistDocumentosMock = <ChecklistDocumento>[
         'Verifique sua Zona e Seção para evitar imprevistos de última hora.',
   ),
 ];
+
+const candidateChecklistMock = <ChecklistDocumento>[
+  ChecklistDocumento(
+    id: 'candidato-perfil',
+    titulo: 'Perfil completo cadastrado',
+    descricao:
+        'Foto, biografia, propostas e experiência profissional atualizadas no sistema.',
+  ),
+  ChecklistDocumento(
+    id: 'candidato-material',
+    titulo: 'Material de campanha aprovado',
+    descricao:
+        'Santinhos, banners e materiais gráficos validados pela Justiça Eleitoral.',
+  ),
+  ChecklistDocumento(
+    id: 'candidato-equipe',
+    titulo: 'Equipe de campanha organizada',
+    descricao:
+        'Coordenadores, cabos eleitorais e voluntários com tarefas definidas.',
+  ),
+  ChecklistDocumento(
+    id: 'candidato-agenda',
+    titulo: 'Agenda de eventos confirmada',
+    descricao: 'Comícios, debates, lives e visitas agendadas e divulgadas.',
+  ),
+  ChecklistDocumento(
+    id: 'candidato-redes',
+    titulo: 'Redes sociais ativas',
+    descricao:
+        'Perfis criados e com conteúdo regular sobre propostas e campanha.',
+  ),
+  ChecklistDocumento(
+    id: 'candidato-doacoes',
+    titulo: 'Registro de doações regularizado',
+    descricao: 'Todas as doações registradas e prestação de contas em dia.',
+  ),
+];

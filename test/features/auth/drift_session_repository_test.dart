@@ -17,14 +17,27 @@ void main() {
     await database.close();
   });
 
-  test('aceita somente a credencial demo e persiste sessao', () async {
-    final authenticated = await repository.login(
+  test('aceita somente credenciais validas e persiste sessao', () async {
+    final authenticatedDemo = await repository.login(
       login: 'demo@apuraqui.app',
-      password: '123456',
+      password: 'Apura@2026',
     );
 
-    expect(authenticated, isTrue);
+    expect(authenticatedDemo, isTrue);
     expect((await repository.watchSession().first)?.login, 'demo@apuraqui.app');
+
+    await repository.logout();
+
+    final authenticatedCandidate = await repository.login(
+      login: 'candidato@apuraqui.app',
+      password: 'Apura@2026',
+    );
+
+    expect(authenticatedCandidate, isTrue);
+    expect(
+      (await repository.watchSession().first)?.login,
+      'candidato@apuraqui.app',
+    );
   });
 
   test('credencial invalida nao cria sessao', () async {
@@ -38,7 +51,7 @@ void main() {
   });
 
   test('logout remove sessao persistida', () async {
-    await repository.login(login: 'demo@apuraqui.app', password: '123456');
+    await repository.login(login: 'demo@apuraqui.app', password: 'Apura@2026');
 
     await repository.logout();
 

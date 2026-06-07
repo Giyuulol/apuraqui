@@ -1,11 +1,8 @@
-import 'package:apuraqui/core/design_system/components/app_card.dart';
 import 'package:apuraqui/core/design_system/theme/app_theme.dart';
 import 'package:apuraqui/core/design_system/tokens/app_colors.dart';
 import 'package:apuraqui/core/design_system/tokens/app_radius.dart';
 import 'package:apuraqui/core/design_system/tokens/app_spacing.dart';
 import 'package:apuraqui/core/design_system/tokens/app_typography.dart';
-import 'package:apuraqui/core/theme/app_colors.dart' as legacy_colors;
-import 'package:apuraqui/core/widgets/app_card.dart' as legacy_widgets;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,15 +36,5 @@ void main() {
     expect(styles.map((style) => style?.fontFamily).toSet(), {
       AppTypography.fontFamilyBase,
     });
-  });
-
-  test('preserva imports legados durante a migracao gradual', () {
-    const legacyCard = legacy_widgets.AppCard(child: SizedBox());
-
-    expect(
-      legacy_colors.AppColors.interactionOnLight,
-      AppColors.interactionOnLight,
-    );
-    expect(legacyCard, isA<AppCard>());
   });
 }

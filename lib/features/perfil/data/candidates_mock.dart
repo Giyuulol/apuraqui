@@ -9,8 +9,9 @@ const candidatesMock = <CandidateProfile>[
     cargo: 'Presidente',
     numero: '12',
     partido: 'Partido Renovação (PR)',
+    cor: 0xFF009B3A,
     sobre:
-        'Sobre: Professora universitária com 20 anos de experiência em gestão pública e foco em educação, saúde e inclusão social.',
+        'Professora universitária com 20 anos de experiência na rede pública, ex-governadora. Seu foco de atuação é na sustentabilidade aliada à educação integral.',
     propostas: [
       GovernmentPlanItem(
         id: 'educacao',
@@ -66,6 +67,7 @@ const candidatesMock = <CandidateProfile>[
     cargo: 'Presidente',
     numero: '45',
     partido: 'Partido do Povo (PP)',
+    cor: 0xFF002776,
     sobre:
         'Empresário e gestor público. Defende a geração acelerada de empregos, forte atração de investimentos privados e a desburocratização da máquina do estado.',
     propostas: [
@@ -123,6 +125,7 @@ const candidatesMock = <CandidateProfile>[
     cargo: 'Presidente',
     numero: '77',
     partido: 'Partido Verde (PV)',
+    cor: 0xFFEAB308,
     sobre:
         'Ambientalista premiada internacionalmente e advogada. Trabalha pela construção de uma economia verde aliada a um forte investimento em tecnologia e inovação social.',
     propostas: [

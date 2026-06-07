@@ -10,13 +10,14 @@ import 'features/auth/login_screen.dart';
 import 'features/comparador/comparador_propostas_page.dart';
 import 'features/dashboard/dashboard_page.dart';
 import 'features/dashboard/prototype_menu_drawer.dart';
+import 'features/inelegibilidade/inelegibilidade_page.dart';
 import 'features/leitor_qr/leitor_qr_page.dart';
 import 'features/local_votacao/local_votacao_page.dart';
 import 'features/noticias/central_noticias_page.dart';
 import 'features/perfil/candidatos_page.dart';
 import 'features/santinho/santinhos_page.dart';
-import 'features/votacao/checklist_documentos_page.dart';
 import 'features/splash/splash_screen.dart';
+import 'features/votacao/checklist_documentos_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: ApuraquiApp()));
@@ -67,6 +68,7 @@ class AppHomePage extends ConsumerStatefulWidget {
 
 class _AppHomePageState extends ConsumerState<AppHomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  static const _comparatorIndex = 2;
 
   void _openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
@@ -77,38 +79,141 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
     Navigator.of(context).pop();
   }
 
+  void _showDestination(int index) {
+    ref.read(appPreferencesRepositoryProvider).saveNavigationIndex(index);
+  }
+
   Future<void> _confirmLogout() async {
+    final textTheme = Theme.of(context).textTheme;
     await showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sair da Conta?'),
-        content: const Text(
-          'Você precisará fazer login novamente para acessar os dados da apuração.',
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-        actions: [
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFE10600),
-                foregroundColor: Colors.white,
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 320,
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(32), // rounded-[2rem]
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                ref.read(authControllerProvider.notifier).logout();
-              },
-              child: const Text('Sim, quero sair'),
-            ),
+            ],
           ),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Ícone de Logout circular
+              Container(
+                width: 76,
+                height: 76,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFEF2F2), // bg-red-50
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.logout_rounded,
+                  color: Color(0xFFEF4444), // text-red-500
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Título
+              Text(
+                'Sair do ApurAqui?',
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22,
+                  color: const Color(0xFF111827),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              // Descrição
+              Text(
+                'Tem certeza que deseja sair do aplicativo? Você precisará fazer login novamente.',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF6B7280),
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 28),
+              // Botões empilhados verticalmente
+              Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFDC2626).withValues(alpha: 0.2),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFDC2626), // bg-red-600
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        ref.read(authControllerProvider.notifier).logout();
+                      },
+                      child: Text(
+                        'Sim, quero sair',
+                        style: textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: const Color(0xFFF3F4F6), // bg-gray-100
+                        foregroundColor: const Color(
+                          0xFF374151,
+                        ), // text-gray-700
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancelar',
+                        style: textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF374151),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -119,19 +224,32 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
 
     final pages = <Widget>[
       DashboardPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
-      SantinhosPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      SantinhosPage(
+        onMenuPressed: _openDrawer,
+        onLogout: _confirmLogout,
+        onViewProposals: () => _showDestination(_comparatorIndex),
+      ),
       ComparadorPropostasPage(
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
       ),
       LocalVotacaoPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
-      LeitorQrCodePage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      LeitorQrCodePage(
+        onMenuPressed: _openDrawer,
+        onLogout: _confirmLogout,
+        onViewProposals: () => _showDestination(_comparatorIndex),
+      ),
       ChecklistDocumentosPage(
         onMenuPressed: _openDrawer,
         onLogout: _confirmLogout,
       ),
-      CandidatosPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      CandidatosPage(
+        onMenuPressed: _openDrawer,
+        onLogout: _confirmLogout,
+        onViewProposals: () => _showDestination(_comparatorIndex),
+      ),
       CentralNoticiasPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
+      InelegibilidadePage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
     ];
 
     return Scaffold(

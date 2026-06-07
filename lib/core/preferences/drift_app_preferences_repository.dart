@@ -5,7 +5,8 @@ class DriftAppPreferencesRepository implements AppPreferencesRepository {
   DriftAppPreferencesRepository(this._database);
 
   static const navigationIndexKey = 'navigation-index';
-  static const navigationDestinationCount = 8;
+  static const rememberedLoginKey = 'remembered-login';
+  static const navigationDestinationCount = 9;
 
   final AppDatabase _database;
 
@@ -20,6 +21,33 @@ class DriftAppPreferencesRepository implements AppPreferencesRepository {
       navigationIndexKey,
       _parseIndex('$index').toString(),
     );
+  }
+
+  @override
+  Stream<String?> watchRememberedLogin() {
+    return _database.watchPreference(rememberedLoginKey).map((value) {
+      final normalized = value?.trim();
+      if (normalized == null || normalized.isEmpty) return null;
+      return normalized;
+    });
+  }
+
+  @override
+  Future<String?> getRememberedLogin() async {
+    final value = await _database.getPreference(rememberedLoginKey);
+    final normalized = value?.trim();
+    if (normalized == null || normalized.isEmpty) return null;
+    return normalized;
+  }
+
+  @override
+  Future<void> saveRememberedLogin(String login) {
+    return _database.setPreference(rememberedLoginKey, login.trim());
+  }
+
+  @override
+  Future<void> clearRememberedLogin() {
+    return _database.setPreference(rememberedLoginKey, '');
   }
 
   int _parseIndex(String? value) {

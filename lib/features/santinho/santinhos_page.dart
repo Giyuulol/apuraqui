@@ -9,10 +9,16 @@ import 'data/santinhos_mock.dart';
 import 'widgets/santinho_card.dart';
 
 class SantinhosPage extends ConsumerWidget {
-  const SantinhosPage({this.onMenuPressed, this.onLogout, super.key});
+  const SantinhosPage({
+    this.onMenuPressed,
+    this.onLogout,
+    this.onViewProposals,
+    super.key,
+  });
 
   final VoidCallback? onMenuPressed;
   final VoidCallback? onLogout;
+  final VoidCallback? onViewProposals;
 
   void _showShareAllModal(BuildContext context) {
     showDialog<void>(
@@ -96,13 +102,20 @@ class SantinhosPage extends ConsumerWidget {
                   (candidate) => candidate.id == santinhosMock[i].candidateId,
                 ),
                 saved: savedIds.contains(santinhosMock[i].id),
-                onSave: () {
+                onToggleSave: () {
+                  final isSaved = savedIds.contains(santinhosMock[i].id);
                   return ref
                       .read(savedSantinhosRepositoryProvider)
-                      .setSaved(santinhosMock[i].id, saved: true);
+                      .setSaved(santinhosMock[i].id, saved: !isSaved);
                 },
-                onViewProposals: () =>
-                    Navigator.of(context).pushNamed(AppRoutes.comparator),
+                onViewProposals: () {
+                  final callback = onViewProposals;
+                  if (callback != null) {
+                    callback();
+                    return;
+                  }
+                  Navigator.of(context).pushNamed(AppRoutes.comparator);
+                },
               ),
               if (i != santinhosMock.length - 1) const SizedBox(height: 24),
             ],

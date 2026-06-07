@@ -6,7 +6,7 @@ class DriftSessionRepository implements SessionRepository {
   DriftSessionRepository(this._database);
 
   static const demoLogin = 'demo@apuraqui.app';
-  static const demoPassword = '123456';
+  static const demoPassword = 'Apura@2026';
   static const demoUserId = 'demo-user';
 
   final AppDatabase _database;
@@ -27,13 +27,16 @@ class DriftSessionRepository implements SessionRepository {
   @override
   Future<bool> login({required String login, required String password}) async {
     final normalizedLogin = login.trim().toLowerCase();
-    if (normalizedLogin != demoLogin || password != demoPassword) {
+    final isDemo = normalizedLogin == demoLogin;
+    final isCandidate = normalizedLogin == 'candidato@apuraqui.app';
+
+    if ((!isDemo && !isCandidate) || password != demoPassword) {
       return false;
     }
 
     await _database.saveSession(
-      userId: demoUserId,
-      login: demoLogin,
+      userId: isDemo ? demoUserId : 'candidate-user',
+      login: normalizedLogin,
       authenticatedAt: DateTime.now().toUtc(),
     );
     return true;

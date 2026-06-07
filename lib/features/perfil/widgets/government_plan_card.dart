@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/app_card.dart';
 import '../models/government_plan_item.dart';
 
 class GovernmentPlanCard extends StatelessWidget {
-  const GovernmentPlanCard({required this.item, super.key});
+  const GovernmentPlanCard({
+    required this.item,
+    this.candidateAccentColor,
+    super.key,
+  });
 
   final GovernmentPlanItem item;
+  final Color? candidateAccentColor;
 
   IconData _iconFromName(String name) {
     switch (name) {
@@ -31,39 +35,58 @@ class GovernmentPlanCard extends StatelessWidget {
     final iconColor = Color(item.iconeCor);
     final iconBg = Color(item.iconeFundo);
 
-    return AppCard(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.04),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
                     color: iconBg,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(_iconFromName(item.icone), color: iconColor),
+                  child: Icon(
+                    _iconFromName(item.icone),
+                    color: iconColor,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     item.titulo,
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontSize: 20,
+                    style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
+                      fontSize: 17,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             Text(
               item.descricao,
-              style: textTheme.bodyMedium?.copyWith(height: 1.5),
+              style: textTheme.bodyMedium?.copyWith(
+                height: 1.55,
+                color: const Color(0xFF4B5563),
+              ),
             ),
             const SizedBox(height: 14),
             Container(
@@ -76,10 +99,10 @@ class GovernmentPlanCard extends StatelessWidget {
                 children: [
                   const Icon(
                     Icons.verified_outlined,
-                    size: 16,
+                    size: 15,
                     color: Color(0xFF009B3A),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 5),
                   Text(
                     'PROPOSTA OFICIAL',
                     style: textTheme.labelSmall?.copyWith(

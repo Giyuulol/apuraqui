@@ -8,6 +8,7 @@ class RecoverPasswordScreen extends StatefulWidget {
 }
 
 class _RecoverPasswordScreenState extends State<RecoverPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
   static const _knownEmail = 'demo@apuraqui.app';
@@ -19,7 +20,7 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen> {
   }
 
   void _submit() {
-    if (_emailController.text.trim().isEmpty) {
+    if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
@@ -117,12 +118,23 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-mail',
-                  hintText: 'seu@email.com',
-                  prefixIcon: Icon(Icons.email_outlined),
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'E-mail',
+                    hintText: 'seu@email.com',
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                  validator: (value) {
+                    final email = value?.trim() ?? '';
+                    if (!email.contains('@') || !email.contains('.')) {
+                      return 'Informe um e-mail válido';
+                    }
+                    return null;
+                  },
                 ),
               ),
               const SizedBox(height: 18),

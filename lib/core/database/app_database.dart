@@ -136,6 +136,12 @@ class AppDatabase extends _$AppDatabase {
         .map((record) => record?.value);
   }
 
+  Future<String?> getPreference(String key) {
+    return (select(appPreferences)..where((table) => table.key.equals(key)))
+        .getSingleOrNull()
+        .then((record) => record?.value);
+  }
+
   Future<void> setPreference(String key, String value) {
     return into(appPreferences).insertOnConflictUpdate(
       AppPreferencesCompanion.insert(

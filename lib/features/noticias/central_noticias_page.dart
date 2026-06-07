@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../core/widgets/app_card.dart';
+import '../../core/design_system/components/app_card.dart';
+import '../../core/design_system/tokens/app_colors.dart';
 import '../../core/widgets/app_header.dart';
 import 'data/noticias_mock.dart';
 import 'widgets/fake_news_check_card.dart';

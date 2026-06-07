@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../models/candidate_profile.dart';
 
 class CandidateSelectorCard extends StatelessWidget {
@@ -18,36 +17,49 @@ class CandidateSelectorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final borderColor = selected ? AppColors.success : const Color(0xFFF3F4F6);
+    final accentColor = Color(candidate.cor);
+    final borderColor = selected ? accentColor : const Color(0xFFF3F4F6);
+    final bgColor = selected ? Colors.white : Colors.white;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(32),
+    return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
         width: 120,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: bgColor,
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: borderColor, width: 1.9),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.06),
-              blurRadius: 6,
-              offset: Offset(0, 1),
-            ),
-          ],
+          border: Border.all(color: borderColor, width: selected ? 2.2 : 1.5),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: accentColor.withAlpha(38),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+              : [
+                  const BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, 0.05),
+                    blurRadius: 6,
+                    offset: Offset(0, 1),
+                  ),
+                ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Avatar com anel colorido
             Container(
               width: 64,
               height: 64,
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: selected ? AppColors.success : const Color(0xFFF3F4F6),
+                color: selected ? accentColor : const Color(0xFFF3F4F6),
               ),
-              alignment: Alignment.center,
               child: CircleAvatar(
                 radius: 28,
                 backgroundColor: Colors.white,
@@ -69,34 +81,36 @@ class CandidateSelectorCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Text(
-                candidate.nome.replaceFirst(' ', '\n'),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: textTheme.titleSmall?.copyWith(
-                  color: selected
-                      ? const Color(0xFF101828)
-                      : const Color(0xFF6A7282),
-                  fontWeight: FontWeight.w700,
-                ),
+            const SizedBox(height: 10),
+            // Nome com quebra de linha (preserva 'Maria\nSilva' para o teste)
+            Text(
+              candidate.nome.replaceFirst(' ', '\n'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: textTheme.titleSmall?.copyWith(
+                color: selected
+                    ? const Color(0xFF101828)
+                    : const Color(0xFF6A7282),
+                fontWeight: FontWeight.w700,
+                height: 1.2,
               ),
             ),
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            // Badge do número
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: selected
-                    ? const Color.fromRGBO(0, 155, 58, 0.12)
+                    ? accentColor.withAlpha(32)
                     : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 candidate.numero,
                 style: textTheme.labelLarge?.copyWith(
-                  color: selected ? AppColors.success : const Color(0xFF9CA3AF),
+                  color: selected ? accentColor : const Color(0xFF9CA3AF),
                   fontWeight: FontWeight.w900,
                 ),
               ),

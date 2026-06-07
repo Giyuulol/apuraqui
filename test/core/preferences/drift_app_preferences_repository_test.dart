@@ -26,4 +26,17 @@ void main() {
     await repository.saveNavigationIndex(99);
     expect(await repository.watchNavigationIndex().first, 0);
   });
+
+  test('persiste e limpa login lembrado', () async {
+    expect(await repository.watchRememberedLogin().first, isNull);
+    expect(await repository.getRememberedLogin(), isNull);
+
+    await repository.saveRememberedLogin(' demo@apuraqui.app ');
+    expect(await repository.watchRememberedLogin().first, 'demo@apuraqui.app');
+    expect(await repository.getRememberedLogin(), 'demo@apuraqui.app');
+
+    await repository.clearRememberedLogin();
+    expect(await repository.watchRememberedLogin().first, isNull);
+    expect(await repository.getRememberedLogin(), isNull);
+  });
 }

@@ -23,6 +23,8 @@ void main() {
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Acessar Sistema'), findsOneWidget);
     expect(find.text('E-mail ou CPF'), findsOneWidget);
+    expect(find.text('Usar dados de demonstração'), findsNothing);
+    expect(find.text('Entrar como Candidato'), findsNothing);
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Acessar Sistema'));
     await tester.pump();
@@ -36,20 +38,86 @@ void main() {
   testWidgets('login demo abre a home e persiste sessao', (tester) async {
     await _pumpApp(tester, database);
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'E-mail ou CPF'),
-      'demo@apuraqui.app',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, 'Senha'),
-      '123456',
-    );
+    await tester.enterText(_loginFieldAt(0), 'demo@apuraqui.app');
+    await tester.enterText(_loginFieldAt(1), 'Apura@2026');
     await tester.tap(find.widgetWithText(ElevatedButton, 'Acessar Sistema'));
     await tester.pumpAndSettle();
 
     expect(find.text('Total de Votos'), findsOneWidget);
     final sessions = await database.select(database.appSessions).get();
     expect(sessions.single.login, 'demo@apuraqui.app');
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('login invalido exibe modal de acesso negado', (tester) async {
+    await _pumpApp(tester, database);
+
+    await tester.enterText(_loginFieldAt(0), 'erro@apuraqui.app');
+    await tester.enterText(_loginFieldAt(1), 'Apura@2026');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Acessar Sistema'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Acesso Negado'), findsOneWidget);
+    expect(
+      find.text(
+        'E-mail, CPF ou senha incorretos. Verifique seus dados e tente novamente.',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Tentar Novamente'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Acesso Negado'), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('login rejeita senha fraca antes de autenticar', (tester) async {
+    await _pumpApp(tester, database);
+
+    await tester.enterText(_loginFieldAt(0), 'demo@apuraqui.app');
+    await tester.enterText(_loginFieldAt(1), '123456');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Acessar Sistema'));
+    await tester.pump();
+
+    expect(
+      find.text('Use 8+ caracteres com letra, número e símbolo'),
+      findsOneWidget,
+    );
+    expect(await database.select(database.appSessions).get(), isEmpty);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('lembrar-me persiste somente o login na tela de login', (
+    tester,
+  ) async {
+    await _pumpApp(tester, database);
+
+    await tester.enterText(_loginFieldAt(0), 'demo@apuraqui.app');
+    await tester.enterText(_loginFieldAt(1), 'Apura@2026');
+    await tester.tap(find.text('Lembrar-me'));
+    await tester.pump();
+    expect(tester.widget<Checkbox>(find.byType(Checkbox).first).value, isTrue);
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Acessar Sistema'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Sair'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sim, quero sair'));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final loginField = tester.widget<TextFormField>(_loginFieldAt(0));
+    final passwordField = tester.widget<TextFormField>(_loginFieldAt(1));
+    final rememberMe = tester.widget<Checkbox>(find.byType(Checkbox).first);
+
+    expect(loginField.controller?.text, 'demo@apuraqui.app');
+    expect(passwordField.controller?.text, isEmpty);
+    expect(rememberMe.value, isTrue);
+    expect(await database.select(database.appSessions).get(), isEmpty);
 
     await _disposeWidgetTree(tester);
   });
@@ -107,6 +175,90 @@ void main() {
 
     await _disposeWidgetTree(tester);
   });
+
+  testWidgets('drawer navega para excecoes e inelegibilidade', (tester) async {
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _pumpHome(tester, database);
+
+    await tester.tap(find.byTooltip('Menu'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Exceções e Inelegibilidade'),
+      120,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.tap(find.text('Exceções e Inelegibilidade'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exceções e Inelegibilidade'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('perfil abre comparador mantendo menu lateral', (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _pumpHome(tester, database);
+    await _openDrawerDestination(tester, 'Perfis dos Candidatos');
+
+    await tester.scrollUntilVisible(
+      find.text('Comparar propostas'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Comparar propostas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Compare candidatos lado a lado'), findsOneWidget);
+    expect(find.byTooltip('Menu'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('santinho abre comparador mantendo menu lateral', (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _pumpHome(tester, database);
+    await _openDrawerDestination(tester, 'Santinhos Digitais');
+
+    await tester.tap(find.text('Ver Propostas').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Compare candidatos lado a lado'), findsOneWidget);
+    expect(find.byTooltip('Menu'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('qr abre comparador mantendo menu lateral', (tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await _pumpHome(tester, database);
+    await _openDrawerDestination(tester, 'Leitor de QR Code');
+
+    await tester.tap(find.text('Tocar para Escanear'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ver propostas'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Compare candidatos lado a lado'), findsOneWidget);
+    expect(find.byTooltip('Menu'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
 }
 
 Future<void> _pumpApp(WidgetTester tester, AppDatabase database) async {
@@ -126,6 +278,25 @@ Future<void> _pumpHome(WidgetTester tester, AppDatabase database) async {
       child: const MaterialApp(home: AppHomePage()),
     ),
   );
+  await tester.pumpAndSettle();
+}
+
+Finder _loginFieldAt(int index) {
+  return find.byType(TextFormField).at(index);
+}
+
+Future<void> _openDrawerDestination(
+  WidgetTester tester,
+  String destination,
+) async {
+  await tester.tap(find.byTooltip('Menu'));
+  await tester.pumpAndSettle();
+  await tester.scrollUntilVisible(
+    find.text(destination),
+    120,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.tap(find.text(destination));
   await tester.pumpAndSettle();
 }
 
