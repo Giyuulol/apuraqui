@@ -90,35 +90,37 @@ class PrototypeMenuDrawer extends StatelessWidget {
                   final item = _items[index];
                   final isSelected = index == selectedIndex;
 
-                  return ListTile(
-                    selected: isSelected,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(
+                  return Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      selected: isSelected,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: BorderSide(
+                          color: isSelected
+                              ? AppColors.success
+                              : Colors.transparent,
+                        ),
+                      ),
+                      selectedTileColor: AppColors.successAlternative,
+                      leading: Icon(
+                        item.icon,
                         color: isSelected
                             ? AppColors.success
-                            : Colors.transparent,
+                            : AppColors.readingOnLight.withValues(alpha: 0.7),
                       ),
-                    ),
-                    selectedTileColor: AppColors.successAlternative,
-                    leading: Icon(
-                      item.icon,
-                      color: isSelected
-                          ? AppColors.success
-                          : AppColors.readingOnLight.withValues(alpha: 0.7),
-                    ),
-                    title: Text(
-                      item.label,
-                      style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: isSelected
-                            ? AppColors.success
-                            : AppColors.readingOnLight,
+                      title: Text(
+                        item.label,
+                        style: TextStyle(
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w500,
+                          color: isSelected
+                              ? AppColors.success
+                              : AppColors.readingOnLight,
+                        ),
                       ),
+                      onTap: () => onDestinationSelected(index),
                     ),
-                    onTap: () => onDestinationSelected(index),
                   );
                 },
               ),

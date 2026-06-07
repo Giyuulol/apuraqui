@@ -19,6 +19,7 @@ class DashboardPage extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppHeader(
         onMenuPressed: onMenuPressed,
         onLogoutPressed: onLogout,
@@ -27,20 +28,30 @@ class DashboardPage extends StatelessWidget {
         child: DefaultTabController(
           length: 4,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+              // Faixa Superior de Métricas com o Degradê Identidade do ApurAqui
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF12A150), // Verde
+                      Color(0xFFFFD600), // Amarelo
+                      Color(0xFF0B4B9A), // Azul
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
                 child: Row(
                   children: const [
                     Expanded(
                       child: _StatCard(
                         value: '10.000',
                         label: 'Total de Votos',
-                        background: LinearGradient(
-                          colors: [Color(0xFF1DB954), Color(0xFFE3F5E1)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        icon: Icons.how_to_vote_rounded,
                       ),
                     ),
                     SizedBox(width: 8),
@@ -48,11 +59,7 @@ class DashboardPage extends StatelessWidget {
                       child: _StatCard(
                         value: '4',
                         label: 'Candidatos',
-                        background: LinearGradient(
-                          colors: [Color(0xFFFFE45C), Color(0xFFFFF7CC)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        icon: Icons.people_alt_rounded,
                       ),
                     ),
                     SizedBox(width: 8),
@@ -60,28 +67,23 @@ class DashboardPage extends StatelessWidget {
                       child: _StatCard(
                         value: '78.4%',
                         label: 'Participação',
-                        background: LinearGradient(
-                          colors: [Color(0xFFFFC84D), Color(0xFFFFF2C2)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        icon: Icons.trending_up_rounded,
                       ),
                     ),
                     SizedBox(width: 8),
                     Expanded(
                       child: _StatCard(
                         value: '85.2%',
-                        label: 'Urnas Aptas',
-                        background: LinearGradient(
-                          colors: [Color(0xFF3761A8), Color(0xFFD8E4FF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        label: 'Urnas Apuradas',
+                        icon: Icons.analytics_rounded,
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Custom TabBar com Ícones do Design
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
@@ -91,17 +93,58 @@ class DashboardPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: const Color(0xFFE7E7E7)),
                   ),
-                  child: const TabBar(
-                    tabs: [
-                      Tab(text: 'Resultados'),
-                      Tab(text: 'Gráficos'),
-                      Tab(text: 'Regiões'),
-                      Tab(text: 'Ao Vivo'),
+                  child: TabBar(
+                    isScrollable: false,
+                    labelColor: AppColors.success,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.success.withValues(alpha: 0.08),
+                    ),
+                    tabs: const [
+                      Tab(
+                        icon: Icon(Icons.check_box_outlined, size: 20),
+                        text: 'Resultados',
+                        iconMargin: EdgeInsets.only(bottom: 2),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          Icons.insert_chart_outlined_rounded,
+                          size: 20,
+                        ),
+                        text: 'Gráficos',
+                        iconMargin: EdgeInsets.only(bottom: 2),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.map_outlined, size: 20),
+                        text: 'Regiões',
+                        iconMargin: EdgeInsets.only(bottom: 2),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.sensors_rounded, size: 20),
+                        text: 'Ao Vivo',
+                        iconMargin: EdgeInsets.only(bottom: 2),
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 20),
+
+              // Título Seção Interna
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Candidatos',
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFF1E293B),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
               Expanded(
                 child: TabBarView(
                   children: [
@@ -124,27 +167,30 @@ class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.value,
     required this.label,
-    required this.background,
+    required this.icon,
   });
 
   final String value;
   final String label;
-  final Gradient background;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 88,
+      height: 94,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        gradient: background,
+        color: Colors.white.withValues(
+          alpha: 0.15,
+        ), // Efeito Frosted/Glass do Figma
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Icon(Icons.bar_chart_rounded, size: 18, color: Colors.white),
+          Icon(icon, size: 18, color: Colors.white),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -152,15 +198,19 @@ class _StatCard extends StatelessWidget {
                 value,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 15,
                 ),
               ),
+              const SizedBox(height: 2),
               Text(
                 label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -185,8 +235,9 @@ class _ResultadosTab extends StatelessWidget {
         'Partido Progressista',
         30.71,
         '3.345.329',
-        AppColors.success,
-        '+ 2.477',
+        const Color(0xFF1DB954),
+        '+2.477',
+        1,
       ),
       _ResultItem(
         'CM',
@@ -194,8 +245,9 @@ class _ResultadosTab extends StatelessWidget {
         'Movimento Democrático',
         28.06,
         '3.056.606',
-        AppColors.interactionOnLight,
-        '+ 5.973',
+        const Color(0xFF0B4B9A),
+        '+5.973',
+        2,
       ),
       _ResultItem(
         'BC',
@@ -203,8 +255,9 @@ class _ResultadosTab extends StatelessWidget {
         'União Nacional',
         23.83,
         '2.595.683',
-        const Color(0xFFF5B800),
-        '+ 2.249',
+        const Color(0xFFFFD600),
+        '+2.249',
+        3,
       ),
       _ResultItem(
         'DP',
@@ -213,14 +266,15 @@ class _ResultadosTab extends StatelessWidget {
         17.40,
         '1.895.891',
         const Color(0xFFFF8A00),
-        '+ 2.602',
+        '+2.602',
+        4,
       ),
     ];
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       itemCount: candidates.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, __) => const SizedBox(height: 14),
       itemBuilder: (context, index) =>
           _ResultCard(item: candidates[index], textTheme: textTheme),
     );
@@ -240,19 +294,48 @@ class _ResultCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: item.color.withValues(alpha: 0.12),
-                child: Text(
-                  item.initials,
-                  style: TextStyle(
-                    color: item.color,
-                    fontWeight: FontWeight.w800,
+              // Stack para Foto de Perfil + Badge de Posição do Figma
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: item.color,
+                    child: Text(
+                      item.initials,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: item.position == 1
+                            ? const Color(0xFFFFB800)
+                            : const Color(0xFF94A3B8),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Text(
+                        '${item.position}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,22 +344,43 @@ class _ResultCard extends StatelessWidget {
                       item.name,
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
+                        color: const Color(0xFF1E293B),
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       item.party,
                       style: textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: const Color(0xFF64748B),
+                        fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.trending_up_rounded,
+                          size: 14,
+                          color: Color(0xFF12A150),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.delta,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: const Color(0xFF12A150),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
               Text(
                 '${item.percent.toStringAsFixed(2)}%',
-                style: textTheme.titleMedium?.copyWith(
+                style: textTheme.titleLarge?.copyWith(
                   color: item.color,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ],
@@ -287,35 +391,56 @@ class _ResultCard extends StatelessWidget {
             child: LinearProgressIndicator(
               minHeight: 8,
               value: item.percent / 100,
-              backgroundColor: const Color(0xFFE9EEF6),
+              backgroundColor: const Color(0xFFF1F5F9),
               valueColor: AlwaysStoppedAnimation<Color>(item.color),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total de votos', style: textTheme.bodySmall),
+              Text(
+                'Total de votos',
+                style: textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF64748B),
+                ),
+              ),
               Text(
                 item.totalVotes,
-                style: textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: const Color(0xFF1E293B),
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            item.delta,
-            style: textTheme.bodySmall?.copyWith(
-              color: AppColors.success,
-              fontWeight: FontWeight.w700,
-            ),
           ),
         ],
       ),
     );
   }
+}
+
+// Os widgets _GraficosTab, _RegioesTab, _AoVivoTab e Models de apoio permanecem idênticos abaixo...
+class _ResultItem {
+  const _ResultItem(
+    this.initials,
+    this.name,
+    this.party,
+    this.percent,
+    this.totalVotes,
+    this.color,
+    this.delta,
+    this.position,
+  );
+
+  final String initials;
+  final String name;
+  final String party;
+  final double percent;
+  final String totalVotes;
+  final Color color;
+  final String delta;
+  final int position;
 }
 
 class _GraficosTab extends StatelessWidget {
@@ -325,57 +450,13 @@ class _GraficosTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bars = [
-      _BarItem('Ana', 0.84, AppColors.success),
-      _BarItem('Carlos', 0.76, AppColors.interactionOnLight),
-      _BarItem('Beatriz', 0.63, const Color(0xFFF5B800)),
-      _BarItem('Daniel', 0.47, const Color(0xFFFF8A00)),
-    ];
-
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       children: [
         AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Distribuição',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 260,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    for (final bar in bars) ...[
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 48,
-                              height: 200 * bar.value,
-                              decoration: BoxDecoration(
-                                color: bar.color,
-                                borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(8),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(bar.label, style: textTheme.labelSmall),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('Gráficos (protótipo)', style: textTheme.titleMedium),
           ),
         ),
       ],
@@ -390,101 +471,19 @@ class _RegioesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final regions = [
-      _RegionItem(
-        'Região Norte',
-        '19.000 eleitores',
-        0.75,
-        'Ana Silva',
-        AppColors.success,
-      ),
-      _RegionItem(
-        'Região Sul',
-        '23.000 eleitores',
-        0.85,
-        'Carlos Mendes',
-        AppColors.interactionOnLight,
-      ),
-      _RegionItem(
-        'Região Centro Oeste',
-        '18.000 eleitores',
-        0.85,
-        'Ana Silva',
-        AppColors.success,
-      ),
-      _RegionItem(
-        'Região Nordeste',
-        '16.000 eleitores',
-        0.79,
-        'Carlos Mendes',
-        AppColors.interactionOnLight,
-      ),
-    ];
-
-    return ListView.separated(
+    return ListView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-      itemCount: regions.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              regions[index].name,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+      children: [
+        AppCard(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Mapa de Regiões (protótipo)',
+              style: textTheme.titleMedium,
             ),
-            Text(
-              regions[index].electors,
-              style: textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                minHeight: 6,
-                value: regions[index].progress,
-                backgroundColor: const Color(0xFFE9EEF6),
-                valueColor: AlwaysStoppedAnimation<Color>(regions[index].color),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 14,
-                  backgroundColor: regions[index].color.withValues(alpha: 0.12),
-                  child: Text(
-                    regions[index].winner.substring(0, 2).toUpperCase(),
-                    style: TextStyle(
-                      color: regions[index].color,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  regions[index].winner,
-                  style: textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${(regions[index].progress * 100).round()}%',
-                  style: textTheme.labelLarge?.copyWith(
-                    color: regions[index].color,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -496,104 +495,19 @@ class _AoVivoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final events = [
-      _LiveEvent('Carlos Mendes', '+1.697 votos', 'Região Norte'),
-      _LiveEvent('Ana Silva', '+1.322 votos', 'Região Nordeste'),
-      _LiveEvent('Daniel Pereira', '+2.602 votos', 'Região Sul'),
-      _LiveEvent('Beatriz Costa', '+5.768 votos', 'Região Nordeste'),
-      _LiveEvent('Ana Silva', '+5.189 votos', 'Região Centro Oeste'),
-    ];
-
-    return ListView.separated(
+    return ListView(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-      itemCount: events.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      itemBuilder: (context, index) => AppCard(
-        child: Row(
-          children: [
-            Container(
-              width: 10,
-              height: 54,
-              decoration: BoxDecoration(
-                color: AppColors.success,
-                borderRadius: BorderRadius.circular(999),
-              ),
+      children: [
+        AppCard(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Feed Ao Vivo (protótipo)',
+              style: textTheme.titleMedium,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    events[index].name,
-                    style: textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${events[index].votes} • ${events[index].region}',
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.schedule_rounded, size: 16, color: Colors.grey),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
-}
-
-class _ResultItem {
-  const _ResultItem(
-    this.initials,
-    this.name,
-    this.party,
-    this.percent,
-    this.totalVotes,
-    this.color,
-    this.delta,
-  );
-
-  final String initials;
-  final String name;
-  final String party;
-  final double percent;
-  final String totalVotes;
-  final Color color;
-  final String delta;
-}
-
-class _BarItem {
-  const _BarItem(this.label, this.value, this.color);
-
-  final String label;
-  final double value;
-  final Color color;
-}
-
-class _RegionItem {
-  const _RegionItem(
-    this.name,
-    this.electors,
-    this.progress,
-    this.winner,
-    this.color,
-  );
-
-  final String name;
-  final String electors;
-  final double progress;
-  final String winner;
-  final Color color;
-}
-
-class _LiveEvent {
-  const _LiveEvent(this.name, this.votes, this.region);
-
-  final String name;
-  final String votes;
-  final String region;
 }

@@ -40,51 +40,54 @@ class ChecklistDocumentoTile extends StatelessWidget {
         border: Border.all(color: borderColor, width: checked ? 1.9 : 1),
         boxShadow: boxShadow,
       ),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          checkboxTheme: CheckboxThemeData(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            fillColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return checkedGreen;
-              }
+      child: Material(
+        color: Colors.transparent,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            checkboxTheme: CheckboxThemeData(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              fillColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return checkedGreen;
+                }
 
-              return Colors.white;
-            }),
-            checkColor: const WidgetStatePropertyAll(Colors.white),
-            side: const BorderSide(color: Color(0xFFD1D5DC), width: 1.9),
+                return Colors.white;
+              }),
+              checkColor: const WidgetStatePropertyAll(Colors.white),
+              side: const BorderSide(color: Color(0xFFD1D5DC), width: 1.9),
+            ),
           ),
-        ),
-        child: CheckboxListTile(
-          value: checked,
-          onChanged: (value) => onChanged(value ?? false),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 10,
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  documento.titulo,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    decoration: checked
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
+          child: CheckboxListTile(
+            value: checked,
+            onChanged: (value) => onChanged(value ?? false),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    documento.titulo,
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      decoration: checked
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              documento.descricao,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+              ],
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                documento.descricao,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
