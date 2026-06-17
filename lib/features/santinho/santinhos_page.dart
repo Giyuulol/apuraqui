@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/navigation/app_routes.dart';
 import '../../core/widgets/app_header.dart';
+import '../perfil/data/candidates_mock.dart';
+import 'application/saved_santinhos_providers.dart';
 import 'data/santinhos_mock.dart';
 import 'widgets/santinho_card.dart';
 
-class SantinhosPage extends StatelessWidget {
-  const SantinhosPage({super.key});
+class SantinhosPage extends ConsumerWidget {
+  const SantinhosPage({
+    this.onMenuPressed,
+    this.onLogout,
+    this.onViewProposals,
+    super.key,
+  });
+
+  final VoidCallback? onMenuPressed;
+  final VoidCallback? onLogout;
+  final void Function(String candidateId)? onViewProposals;
 
   void _showShareAllModal(BuildContext context) {
     showDialog<void>(
@@ -16,11 +29,15 @@ class SantinhosPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+    final savedIds = ref.watch(savedSantinhoIdsProvider).value ?? {};
 
     return Scaffold(
-      appBar: const AppHeader(),
+      appBar: AppHeader(
+        onMenuPressed: onMenuPressed,
+        onLogoutPressed: onLogout,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
@@ -79,7 +96,31 @@ class SantinhosPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             for (var i = 0; i < santinhosMock.length; i++) ...[
-              SantinhoCard(item: santinhosMock[i]),
+              SantinhoCard(
+                item: santinhosMock[i],
+                candidate: candidatesMock.firstWhere(
+                  (candidate) => candidate.id == santinhosMock[i].candidateId,
+                ),
+                saved: savedIds.contains(santinhosMock[i].id),
+                onToggleSave: () {
+                  final isSaved = savedIds.contains(santinhosMock[i].id);
+                  return ref
+                      .read(savedSantinhosRepositoryProvider)
+                      .setSaved(santinhosMock[i].id, saved: !isSaved);
+                },
+                onViewProposals: () {
+                  final candidateId = santinhosMock[i].candidateId;
+                  final callback = onViewProposals;
+                  if (callback != null) {
+                    callback(candidateId);
+                    return;
+                  }
+                  Navigator.of(context).pushNamed(
+                    AppRoutes.candidateProfile,
+                    arguments: candidateId,
+                  );
+                },
+              ),
               if (i != santinhosMock.length - 1) const SizedBox(height: 24),
             ],
           ],
@@ -135,12 +176,19 @@ class _ShareAllDialog extends StatelessWidget {
                     width: 64,
                     height: 64,
                     decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFF009B3A), width: 3),
+                      border: Border.all(
+                        color: const Color(0xFF009B3A),
+                        width: 3,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: const CircleAvatar(
                       backgroundColor: Color(0xFFE8F5E9),
-                      child: Icon(Icons.groups_2_outlined, color: Color(0xFF009B3A), size: 30),
+                      child: Icon(
+                        Icons.groups_2_outlined,
+                        color: Color(0xFF009B3A),
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -158,7 +206,9 @@ class _ShareAllDialog extends StatelessWidget {
                   Text(
                     'Mostre este QR Code para outra pessoa escanear ou envie o link diretamente.',
                     textAlign: TextAlign.center,
-                    style: textTheme.bodyMedium?.copyWith(color: const Color(0xFF6A7282)),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: const Color(0xFF6A7282),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -167,15 +217,25 @@ class _ShareAllDialog extends StatelessWidget {
                     padding: const EdgeInsets.all(26),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF9FAFB),
-                      border: Border.all(color: const Color(0xFFE5E7EB), style: BorderStyle.solid),
+                      border: Border.all(
+                        color: const Color(0xFFE5E7EB),
+                        style: BorderStyle.solid,
+                      ),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+                        border: Border.all(
+                          color: const Color(0xFFE5E7EB),
+                          width: 1.2,
+                        ),
                       ),
-                      child: const Icon(Icons.qr_code_2_rounded, size: 120, color: Color(0xFF101828)),
+                      child: const Icon(
+                        Icons.qr_code_2_rounded,
+                        size: 120,
+                        color: Color(0xFF101828),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),

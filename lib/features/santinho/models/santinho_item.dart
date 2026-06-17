@@ -1,22 +1,15 @@
 class SantinhoItem {
   const SantinhoItem({
     required this.id,
-    required this.candidateName,
-    required this.officeLabel,
-    required this.partyLabel,
-    required this.number,
+    required this.candidateId,
     required this.accentColorValue,
     required this.imageAsset,
   });
 
   final String id;
-  final String candidateName;
-  final String officeLabel;
-  final String partyLabel;
-  final String number;
+  final String candidateId;
   final int accentColorValue;
 
-  // Campo explícito para você adicionar a imagem real do candidato depois.
-  // Exemplo: "assets/images/candidates/maria_silva.png"
+  // O santinho possui composição própria; os dados eleitorais vêm do perfil.
   final String imageAsset;
 }

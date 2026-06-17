@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/app_card.dart';
+import '../../../core/design_system/components/app_card.dart';
+import '../../../core/design_system/tokens/app_colors.dart';
 import '../models/news_item.dart';
 
 class NewsCard extends StatelessWidget {
   const NewsCard({required this.item, super.key});
 
   final NewsItem item;
+
+  void _showPrototypeNotice(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'A abertura da notícia será conectada à fonte oficial na integração com a API.',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +68,7 @@ class NewsCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () => _showPrototypeNotice(context),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.interactionOnLight,
               padding: EdgeInsets.zero,

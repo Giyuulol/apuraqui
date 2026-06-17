@@ -3,105 +3,83 @@
 ## Communication
 
 - Respond to the user in Portuguese.
-- Keep technical terms in English when they are standard in software engineering, such as dependency injection, interface segregation, repository, controller, service, use case, adapter, and event-driven architecture.
+- Keep standard software engineering terms in English when appropriate.
 - Be direct, technical, and structured.
-- Explain reasoning before implementation when the task involves design, architecture, or non-trivial code changes.
+- Explain architectural decisions before non-trivial implementation changes.
 
-## Learning-Oriented Workflow
+## Product Scope
 
-For implementation, architecture, or debugging tasks, follow this structure:
+- ApurAqui is a Flutter mobile app.
+- Support only Android and iOS.
+- Do not add `web/`, `linux/`, `macos/`, or `windows/` scaffolding unless the user explicitly changes the product scope.
+- Keep the app simple while the backend is not defined: use mocks behind clear boundaries and avoid speculative infrastructure.
 
-1. Problem understanding: restate what needs to be solved and why it matters.
-2. Reasoning and decisions: explain the main design choices before applying them.
-3. Step-by-step execution: build the solution incrementally.
-4. Commented implementation: include comments that explain design decisions, not obvious syntax.
-5. Critical review: explain trade-offs, simplifications, risks, and possible improvements.
+## Architecture
 
-## Spec-Driven Development
+- Preserve the feature-based structure established in `lib/features/`.
+- Put shared visual foundations in `lib/core/design_system/`.
+- Put shared non-domain widgets in `lib/core/widgets/` only when they do not belong to a single feature.
+- Keep domain models close to their owning feature.
+- Reuse a single domain model and mock source across screens. Do not duplicate candidate or proposal data in profile, comparator, or santinho flows.
+- Prefer dependency inversion when business rules depend on storage, APIs, or platform integrations.
+- Introduce abstractions only when they reduce coupling, improve testability, or represent a stable domain concept.
+- Use Drift over SQLite for local persistence and Riverpod for dependency injection and reactive UI state.
+- Keep SQLite access inside `lib/core/database/` and Drift repository adapters. Widgets must consume repositories or providers, never query the database directly.
+- Keep repository interfaces close to their owning feature and use in-memory SQLite in persistence tests.
+- Regenerate `lib/core/database/app_database.g.dart` with `dart run build_runner build` after changing Drift tables.
 
-Prefer Spec-Driven Development before implementation:
+## Design System
 
-1. Define the expected behavior.
-2. Define contracts, interfaces, types, input/output shapes, or function signatures.
-3. Define use cases and edge cases.
-4. Implement only after the contract is clear.
-5. Suggest or add tests aligned with the specification.
+- Use the GOV.BR-DS adaptation as the visual foundation and the Figma prototype as the composition reference.
+- Apply the Rawline font family globally through `AppTheme`. All screens and components must inherit Rawline.
+- Prefer semantic tokens from `lib/core/design_system/tokens/` for colors, spacing, radius, and typography.
+- Avoid raw colors, spacing, radius, and typography literals in shared components when an existing token expresses the same meaning.
+- Model feature-specific candidate accent colors explicitly when they communicate candidate identity.
+- Keep mobile layouts responsive. Avoid rigid heights around text when they can cause overflow under text scaling or narrow viewports.
+- Keep touch targets accessible, provide labels or tooltips for icon-only actions, and preserve readable contrast.
+- Use the Figma santinho hierarchy: candidate image as the main visual, clear identity overlay, highlighted official number, primary save action, and secondary outlined proposal action.
+- Visible actions must work or be explicitly documented as prototype mocks.
 
-## Architecture Principles
+## Workflow
 
-- Prefer maintainable, testable, and scalable designs.
-- Use SOLID principles when relevant, and explicitly name the principle being applied.
-- Prefer dependency inversion when business rules depend on external systems, frameworks, databases, APIs, or UI layers.
-- Keep business rules independent from infrastructure details.
-- Favor small, focused modules with clear responsibilities.
-- Avoid unnecessary abstractions; introduce abstractions only when they reduce coupling, improve testability, or model a stable domain concept.
-
-## Design Patterns
-
-- Name relevant design patterns when they are used, such as Strategy, Factory, Adapter, Repository, Observer, Command, or Dependency Injection.
-- Justify why the pattern fits the current problem.
-- Mention trade-offs when a pattern adds complexity.
-- Avoid applying patterns mechanically when a simpler solution is enough.
+1. Restate expected behavior and why it matters.
+2. Define contracts, inputs, outputs, and edge cases before implementation.
+3. Inspect the current implementation and preserve relevant collaborator work.
+4. Add or update behavior-focused tests.
+5. Implement incrementally with scoped changes.
+6. Run formatting, static analysis, tests, and relevant mobile build validation.
+7. Report trade-offs, remaining mocks, and test gaps.
 
 ## Code Quality
 
-- Prefer complete, working code over isolated snippets.
-- Preserve the existing style and architecture of the project.
-- Keep changes scoped to the requested task.
-- Identify code smells and anti-patterns when they appear.
-- Suggest refactorings with technical justification.
-- Do not rewrite large areas of code without first explaining the reason.
+- Preserve the current architecture and code style unless a targeted refactor has a clear justification.
+- Prefer small modules with focused responsibilities.
+- Explain design decisions in comments only when the code cannot communicate them clearly.
+- Remove dead code, empty files, duplicate models, and unused scaffolding.
+- Do not import branch content blindly. Selectively bring code, assets, and dependencies that belong to the Flutter mobile app.
+
+## Git Hygiene
+
+- Do not commit `node_modules/`, `.codex/`, editor-local configuration, or Node tooling added only for local experimentation.
+- Do not discard existing user changes.
+- When a collaborator branch contains generated or local-only files, import the useful Flutter files selectively.
+- Do not run `flutter clean` or remove `.dart_tool/` while a developer session is using `flutter run`; it breaks hot reload until `flutter pub get` regenerates package metadata.
 
 ## Testing
 
-- Suggest tests for the main use cases, edge cases, and failure paths.
 - Prefer tests that verify behavior instead of implementation details.
-- When possible, align test cases with the previously defined specification.
-- Mention remaining test gaps if full coverage is not practical.
+- Cover the main flow, validation errors, navigation, responsive layout regressions, and callback behavior.
+- Run at minimum:
 
-## Review Style
+```bash
+dart format --set-exit-if-changed .
+flutter analyze
+flutter test
+git diff --check
+git diff --cached --check
+```
 
-When reviewing code:
+## Optional Tooling
 
-1. List issues first, ordered by severity.
-2. Explain why each issue matters.
-3. Suggest targeted refactorings.
-4. Only then provide a refactored version when useful.
-
-## System Design Expectations
-
-When discussing system design or architecture:
-
-- Mention relevant architectural styles, such as MVC, Clean Architecture, Hexagonal Architecture, layered architecture, event-driven architecture, or microservices.
-- Consider scalability, maintainability, testability, observability, and operational complexity.
-- Explain trade-offs clearly.
-- Prefer simple architecture until there is a concrete reason to add distributed complexity.
-
-## vexp <!-- vexp v2.0.12 -->
-
-**MANDATORY: use `run_pipeline` — do NOT grep or glob the codebase.**
-vexp returns pre-indexed, graph-ranked context in a single call.
-
-### Workflow
-1. `run_pipeline` with your task description — ALWAYS FIRST (replaces all other tools)
-2. Make targeted changes based on the context returned
-3. `run_pipeline` again only if you need more context
-
-### Available MCP tools
-- `run_pipeline` — **PRIMARY TOOL**. Runs capsule + impact + memory in 1 call.
-  Auto-detects intent. Includes file content. Example: `run_pipeline({ "task": "fix auth bug" })`
-- `get_skeleton` — compact file structure
-- `index_status` — indexing status
-- `expand_vexp_ref` — expand V-REF placeholders in v2 output
-
-### Agentic search
-- Do NOT use built-in file search, grep, or codebase indexing — always call `run_pipeline` first
-- If you spawn sub-agents or background tasks, pass them the context from `run_pipeline`
-  rather than letting them search the codebase independently
-
-### Smart Features
-Intent auto-detection, hybrid ranking, session memory, auto-expanding budget.
-
-### Multi-Repo
-`run_pipeline` auto-queries all indexed repos. Use `repos: ["alias"]` to scope. Run `index_status` to see aliases.
-<!-- /vexp -->
+- If the `run_pipeline` MCP tool is available, prefer it for indexed repository context.
+- If it is unavailable, continue with local Git and filesystem tools and state the fallback. Optional tooling must not block repository work.

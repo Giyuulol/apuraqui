@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 
+import '../../perfil/models/candidate_profile.dart';
 import '../models/santinho_item.dart';
 
 class SantinhoCard extends StatefulWidget {
-  const SantinhoCard({required this.item, super.key});
+  const SantinhoCard({
+    required this.item,
+    required this.candidate,
+    required this.saved,
+    required this.onToggleSave,
+    required this.onViewProposals,
+    super.key,
+  });
 
   final SantinhoItem item;
+  final CandidateProfile candidate;
+  final bool saved;
+  final Future<void> Function() onToggleSave;
+  final VoidCallback onViewProposals;
 
   @override
   State<SantinhoCard> createState() => _SantinhoCardState();
 }
 
 class _SantinhoCardState extends State<SantinhoCard> {
-  bool _saved = false;
-  bool _sharePressed = false;
-
   void _showShareModal() {
     showGeneralDialog<void>(
       context: context,
@@ -52,7 +61,6 @@ class _SantinhoCardState extends State<SantinhoCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.10),
@@ -77,11 +85,11 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           _ImagePlaceholder(
-                            candidateName: widget.item.candidateName,
+                            candidateName: widget.candidate.nome,
                           ),
                     )
                   else
-                    _ImagePlaceholder(candidateName: widget.item.candidateName),
+                    _ImagePlaceholder(candidateName: widget.candidate.nome),
                   DecoratedBox(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -95,10 +103,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(height: 6, color: accentColor),
-                  ),
+
                   Positioned(
                     top: 16,
                     left: 16,
@@ -110,12 +115,9 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(0, 0, 0, 0.4),
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: const Color.fromRGBO(255, 255, 255, 0.1),
-                        ),
                       ),
                       child: Text(
-                        widget.item.officeLabel,
+                        widget.candidate.cargo.toUpperCase(),
                         style: textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -136,7 +138,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.item.candidateName,
+                                widget.candidate.nome,
                                 style: textTheme.displaySmall?.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
@@ -145,7 +147,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                widget.item.partyLabel,
+                                widget.candidate.partido,
                                 style: textTheme.titleSmall?.copyWith(
                                   color: const Color.fromRGBO(
                                     255,
@@ -165,7 +167,6 @@ class _SantinhoCardState extends State<SantinhoCard> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white, width: 3),
                           ),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -177,7 +178,7 @@ class _SantinhoCardState extends State<SantinhoCard> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              widget.item.number,
+                              widget.candidate.numero,
                               style: textTheme.displaySmall?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
@@ -195,25 +196,25 @@ class _SantinhoCardState extends State<SantinhoCard> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
+                  SizedBox(
+                    width: double.infinity,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       curve: Curves.easeInOut,
                       decoration: BoxDecoration(
-                        color: _saved
+                        color: widget.saved
                             ? const Color(0xFFDCFCE7)
                             : const Color(0xFFF9FAFB),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: TextButton(
-                        onPressed: () {
-                          if (_saved) return;
-                          setState(() => _saved = true);
+                        onPressed: () async {
+                          await widget.onToggleSave();
                         },
                         style: TextButton.styleFrom(
-                          minimumSize: const Size.fromHeight(44),
+                          minimumSize: const Size.fromHeight(48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -225,23 +226,25 @@ class _SantinhoCardState extends State<SantinhoCard> {
                           transitionBuilder: (child, animation) =>
                               FadeTransition(opacity: animation, child: child),
                           child: Row(
-                            key: ValueKey(_saved),
+                            key: ValueKey(widget.saved),
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                _saved
+                                widget.saved
                                     ? Icons.check_circle_outline
                                     : Icons.download_outlined,
                                 size: 16,
-                                color: _saved
+                                color: widget.saved
                                     ? const Color(0xFF008236)
                                     : const Color(0xFF364153),
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                _saved ? 'Salvo!' : 'Salvar',
+                                widget.saved
+                                    ? 'Santinho salvo!'
+                                    : 'Salvar Santinho',
                                 style: textTheme.labelLarge?.copyWith(
-                                  color: _saved
+                                  color: widget.saved
                                       ? const Color(0xFF008236)
                                       : const Color(0xFF364153),
                                   fontWeight: FontWeight.w700,
@@ -253,22 +256,72 @@ class _SantinhoCardState extends State<SantinhoCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: AnimatedScale(
-                      duration: const Duration(milliseconds: 120),
-                      scale: _sharePressed ? 0.98 : 1,
-                      child: GestureDetector(
-                        onTapDown: (_) => setState(() => _sharePressed = true),
-                        onTapCancel: () => setState(() => _sharePressed = false),
-                        onTapUp: (_) => setState(() => _sharePressed = false),
-                        child: FilledButton.icon(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: accentColor,
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF009B3A), Color(0xFF002776)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 39, 118, 0.26),
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
                           ),
-                          onPressed: _showShareModal,
-                          icon: const Icon(Icons.share_outlined, size: 16),
-                          label: const Text('Compartilhar'),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: widget.onViewProposals,
+                        icon: const Icon(
+                          Icons.library_books_outlined,
+                          size: 18,
+                        ),
+                        label: Text(
+                          'Ver Propostas',
+                          style: textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF002776),
+                        side: const BorderSide(
+                          color: Color(0xFF002776),
+                          width: 2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: _showShareModal,
+                      icon: const Icon(Icons.share_outlined, size: 18),
+                      label: Text(
+                        'Compartilhar',
+                        style: textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF002776),
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -378,20 +431,24 @@ class _SantinhoShareDialog extends StatelessWidget {
                       height: 64,
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFF009B3A), width: 3),
+                        border: Border.all(
+                          color: const Color(0xFF009B3A),
+                          width: 3,
+                        ),
                         shape: BoxShape.circle,
                       ),
                       child: ClipOval(
                         child: Image.asset(
                           item.imageAsset,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => const ColoredBox(
-                            color: Color(0xFFE8F5E9),
-                            child: Icon(
-                              Icons.person_outline,
-                              color: Color(0xFF009B3A),
-                            ),
-                          ),
+                          errorBuilder: (context, error, stackTrace) =>
+                              const ColoredBox(
+                                color: Color(0xFFE8F5E9),
+                                child: Icon(
+                                  Icons.person_outline,
+                                  color: Color(0xFF009B3A),
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -410,7 +467,9 @@ class _SantinhoShareDialog extends StatelessWidget {
                     Text(
                       'Mostre este QR Code para outra pessoa escanear ou compartilhar com segurança.',
                       textAlign: TextAlign.center,
-                      style: textTheme.bodyMedium?.copyWith(color: const Color(0xFF6A7282)),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF6A7282),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Container(
@@ -428,7 +487,10 @@ class _SantinhoShareDialog extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+                          border: Border.all(
+                            color: const Color(0xFFE5E7EB),
+                            width: 1.2,
+                          ),
                         ),
                         child: const Icon(
                           Icons.qr_code_2_rounded,

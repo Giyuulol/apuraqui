@@ -10,6 +10,7 @@ class CandidateProfile {
     required this.partido,
     required this.sobre,
     required this.propostas,
+    this.cor = 0xFF009B3A,
   });
 
   final String id;
@@ -20,4 +21,5 @@ class CandidateProfile {
   final String partido;
   final String sobre;
   final List<GovernmentPlanItem> propostas;
+  final int cor;
 }

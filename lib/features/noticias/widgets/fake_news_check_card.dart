@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/app_card.dart';
+import '../../../core/design_system/components/app_card.dart';
+import '../../../core/design_system/tokens/app_colors.dart';
 import '../models/fake_news_item.dart';
 
 class FakeNewsCheckCard extends StatelessWidget {
