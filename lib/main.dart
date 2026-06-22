@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,7 +19,17 @@ import 'features/santinho/santinhos_page.dart';
 import 'features/splash/splash_screen.dart';
 import 'features/votacao/checklist_documentos_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } on Object catch (error, stackTrace) {
+    // Mantem o modo demo funcional enquanto os arquivos do Firebase ainda
+    // nao foram adicionados ao projeto local.
+    debugPrint('Firebase não inicializado: $error');
+    debugPrint(stackTrace.toString());
+  }
+
   runApp(const ProviderScope(child: ApuraquiApp()));
 }
 

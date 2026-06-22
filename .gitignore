@@ -59,3 +59,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase / Google Cloud secrets reais
+**/*service-account*.json
+**/serviceAccount*.json
+**/*.p8
+**/AuthKey_*.p8
+
+# Android signing
+android/key.properties
+**/*.keystore
+**/*.jks
+
+# Environment and Apple signing
+.env
+.env.*
+*.env
+*.mobileprovision
+*.cer
+*.p12
+ios/**/xcuserdata/

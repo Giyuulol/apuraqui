@@ -74,6 +74,25 @@ void main() {
     await _disposeWidgetTree(tester);
   });
 
+  testWidgets('botao de telefone abre fluxo SMS', (tester) async {
+    await _pumpApp(tester, database);
+
+    await tester.scrollUntilVisible(
+      find.text('Entrar com telefone'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(
+      find.widgetWithText(OutlinedButton, 'Entrar com telefone'),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Verificação por SMS'), findsOneWidget);
+    expect(find.text('Enviar código'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
   testWidgets('login rejeita senha fraca antes de autenticar', (tester) async {
     await _pumpApp(tester, database);
 

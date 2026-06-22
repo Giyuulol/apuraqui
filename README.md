@@ -30,9 +30,11 @@ O app oferece santinhos digitais, perfis de candidatos com planos de governo, co
 
 ### 🔐 Autenticação
 - Tela de login com credencial de demonstração local.
+- Login por número de telefone com Firebase Authentication e confirmação por SMS.
 - Cadastro de nova conta com validação de campos.
 - Recuperação de senha (fluxo de protótipo).
-- Sessão autenticada persistida localmente via Drift/SQLite.
+- Sessão demo persistida localmente via Drift/SQLite; a sessão por telefone é
+  observada pelo Firebase Authentication.
 
 > **Credencial demo:** `demo@apuraqui.app` / `Apura@2026`
 
@@ -85,6 +87,7 @@ O app oferece santinhos digitais, perfis de candidatos com planos de governo, co
 | Framework | Flutter 3 (Dart 3) |
 | Gerência de estado | Riverpod 3 (`flutter_riverpod`) |
 | Persistência local | Drift 2 (SQLite) via `drift_flutter` |
+| Autenticação por telefone | Firebase Authentication (`firebase_core` + `firebase_auth`) |
 | Geração de código | `build_runner` + `drift_dev` |
 | Fonte global | Rawline (GOV.BR-DS) |
 | Ícones | Material Icons + `flutter_svg` |
@@ -142,6 +145,34 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter run
 ```
+
+### Configuração do Firebase Authentication
+
+O projeto usa dois adapters de autenticação atrás do contrato
+`SessionRepository`: `DriftSessionRepository` para o modo demo e
+`FirebaseAuthRepository` para o login por telefone. A UI e os controllers não
+dependem diretamente do Firebase SDK, o que aplica o **Repository Pattern** e
+o princípio de **Dependency Inversion**.
+
+Para habilitar o login por SMS em outro ambiente Firebase:
+
+1. Crie ou selecione um projeto no [Firebase Console](https://console.firebase.google.com/).
+2. Em **Authentication > Sign-in method**, habilite o provider **Phone** e
+   configure a política de regiões de SMS, incluindo `+55` quando necessário.
+3. Registre os apps com o bundle/application ID `com.rafaelsouza.apuraqui`.
+4. Adicione `ios/Runner/GoogleService-Info.plist` e
+   `android/app/google-services.json` obtidos do mesmo projeto Firebase.
+5. No iOS, registre no `Info.plist` o URL scheme de callback indicado pela
+   configuração Firebase. O fluxo abre um desafio reCAPTCHA quando necessário.
+6. Durante o desenvolvimento, configure números de teste em
+   **Authentication > Sign-in method > Phone** para não consumir a quota de SMS.
+
+`GoogleService-Info.plist` e `google-services.json` identificam o projeto
+Firebase no aplicativo, mas não substituem controles de acesso no backend.
+Mantenha **Security Rules**, quotas e restrições de API key configuradas. Nunca
+versione service accounts, chaves de assinatura, arquivos `.p8`, `.p12` ou
+variáveis de ambiente com segredos; essas categorias já estão cobertas pelo
+`.gitignore`.
 
 ---
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/preferences/app_preferences_providers.dart';
 import 'application/auth_providers.dart';
 import 'create_account_screen.dart';
+import 'phone_login_screen.dart';
 import 'recover_password_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -96,6 +97,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const CreateAccountScreen()));
+  }
+
+  void _handlePhoneLogin() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const PhoneLoginScreen()));
   }
 
   void _showAccessDeniedDialog() {
@@ -237,6 +244,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           onForgotPassword: _handleForgotPassword,
                           onSubmit: _handleLogin,
                           onCreateAccount: _handleCreateAccount,
+                          onPhoneLogin: _handlePhoneLogin,
                         ),
                       ],
                     ),
@@ -264,6 +272,7 @@ class _LoginCard extends StatelessWidget {
     required this.onForgotPassword,
     required this.onSubmit,
     required this.onCreateAccount,
+    required this.onPhoneLogin,
   });
 
   final GlobalKey<FormState> formKey;
@@ -277,6 +286,7 @@ class _LoginCard extends StatelessWidget {
   final VoidCallback onForgotPassword;
   final VoidCallback onSubmit;
   final VoidCallback onCreateAccount;
+  final VoidCallback onPhoneLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -416,6 +426,22 @@ class _LoginCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 50,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF002776),
+                  side: const BorderSide(color: Color(0xFF002776), width: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onPressed: onPhoneLogin,
+                icon: const Icon(Icons.phone_android_rounded),
+                label: const Text('Entrar com telefone'),
               ),
             ),
           ],

@@ -18,7 +18,7 @@ void main() {
   });
 
   test('aceita somente credenciais validas e persiste sessao', () async {
-    final authenticatedDemo = await repository.login(
+    final authenticatedDemo = await repository.signInWithDemoCredentials(
       login: 'demo@apuraqui.app',
       password: 'Apura@2026',
     );
@@ -28,7 +28,7 @@ void main() {
 
     await repository.logout();
 
-    final authenticatedCandidate = await repository.login(
+    final authenticatedCandidate = await repository.signInWithDemoCredentials(
       login: 'candidato@apuraqui.app',
       password: 'Apura@2026',
     );
@@ -41,7 +41,7 @@ void main() {
   });
 
   test('credencial invalida nao cria sessao', () async {
-    final authenticated = await repository.login(
+    final authenticated = await repository.signInWithDemoCredentials(
       login: 'demo@apuraqui.app',
       password: 'senha-incorreta',
     );
@@ -51,7 +51,10 @@ void main() {
   });
 
   test('logout remove sessao persistida', () async {
-    await repository.login(login: 'demo@apuraqui.app', password: 'Apura@2026');
+    await repository.signInWithDemoCredentials(
+      login: 'demo@apuraqui.app',
+      password: 'Apura@2026',
+    );
 
     await repository.logout();
 
