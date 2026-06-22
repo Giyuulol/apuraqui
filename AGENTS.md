@@ -17,15 +17,17 @@
 ## Architecture
 
 - Preserve the feature-based structure established in `lib/features/`.
+- Keep feature code organized by responsibility when useful: `domain/` for contracts and domain models, `data/` for adapters and mocks, `application/` for Riverpod providers/controllers, and `widgets/` for feature-specific UI.
 - Put shared visual foundations in `lib/core/design_system/`.
 - Put shared non-domain widgets in `lib/core/widgets/` only when they do not belong to a single feature.
 - Keep domain models close to their owning feature.
 - Reuse a single domain model and mock source across screens. Do not duplicate candidate or proposal data in profile, comparator, or santinho flows.
 - Prefer dependency inversion when business rules depend on storage, APIs, or platform integrations.
 - Introduce abstractions only when they reduce coupling, improve testability, or represent a stable domain concept.
-- Use Drift over SQLite for local persistence and Riverpod for dependency injection and reactive UI state.
+- Use Drift backed by SQLite for local persistence and Riverpod for dependency injection and reactive UI state.
 - Keep SQLite access inside `lib/core/database/` and Drift repository adapters. Widgets must consume repositories or providers, never query the database directly.
-- Keep repository interfaces close to their owning feature and use in-memory SQLite in persistence tests.
+- Keep repository interfaces close to their owning feature. Put cross-cutting persistence contracts in `lib/core/` only when they are not owned by a single feature, such as app preferences.
+- Cover Drift repository adapters with in-memory SQLite persistence tests.
 - Regenerate `lib/core/database/app_database.g.dart` with `dart run build_runner build` after changing Drift tables.
 
 ## Design System
