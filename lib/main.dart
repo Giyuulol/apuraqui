@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/design_system/theme/app_theme.dart';
 import 'core/navigation/app_routes.dart';
 import 'core/preferences/app_preferences_providers.dart';
+import 'core/widgets/app_state_view.dart';
 import 'features/auth/application/auth_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/comparador/comparador_propostas_page.dart';
@@ -66,16 +67,12 @@ class AuthGate extends ConsumerWidget {
             if (session == null) return const LoginScreen();
             return const AppHomePage();
           },
-          error: (error, stackTrace) {
-            debugPrint('ERRO SESSION PROVIDER: $error');
-            debugPrint(stackTrace.toString());
-
-            return Scaffold(
-              body: Center(child: SelectableText('Erro:\n$error')),
-            );
-          },
-          loading: () =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          error: (_, _) => Scaffold(
+            body: AppStateView.serverError(
+              onRetry: () => ref.invalidate(sessionProvider),
+            ),
+          ),
+          loading: () => const Scaffold(body: AppStateView.loading()),
         );
   }
 }
@@ -261,7 +258,8 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex = ref.watch(navigationIndexProvider).value ?? 0;
+    final navigationIndexAsync = ref.watch(navigationIndexProvider);
+    final currentIndex = navigationIndexAsync.value ?? 0;
 
     final pages = <Widget>[
       DashboardPage(onMenuPressed: _openDrawer, onLogout: _confirmLogout),
@@ -301,7 +299,34 @@ class _AppHomePageState extends ConsumerState<AppHomePage> {
         onDestinationSelected: _selectDestination,
         onLogoutPressed: _confirmLogout,
       ),
-      body: IndexedStack(index: currentIndex, children: pages),
+      body: Stack(
+        children: [
+          IndexedStack(index: currentIndex, children: pages),
+          if (navigationIndexAsync.isLoading)
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AppStateView.loading(
+                compact: true,
+                message: 'Restaurando sua navegação...',
+              ),
+            ),
+          if (navigationIndexAsync.hasError)
+            Positioned(
+              top: 0,
+              left: 16,
+              right: 16,
+              child: SafeArea(
+                child: AppStateView.serverErrorCompact(
+                  message:
+                      'Não foi possível restaurar a última seção. Você pode continuar navegando.',
+                  onRetry: () => ref.invalidate(navigationIndexProvider),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

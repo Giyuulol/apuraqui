@@ -100,7 +100,7 @@
       "id": "UX-002",
       "title": "Estados padronizados de carregamento e falha",
       "area": "usability",
-      "status": "planned",
+      "status": "done",
       "priority": "P1",
       "description": "Padronizar loading, empty, retry, offline e erro em todas as features com dados assincronos.",
       "acceptanceCriteria": [

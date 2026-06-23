@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/widgets/app_header.dart';
+import '../../core/widgets/app_state_view.dart';
 import '../auth/application/auth_providers.dart';
 import 'application/checklist_progress_providers.dart';
 import 'data/checklist_documentos_mock.dart';
@@ -54,19 +55,39 @@ class _ChecklistDocumentosPageState
     });
   }
 
+  Future<void> _setChecked(String documentId, bool checked) async {
+    try {
+      await ref
+          .read(checklistProgressRepositoryProvider)
+          .setChecked(documentId, checked: checked);
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Não foi possível atualizar o checklist.'),
+          action: SnackBarAction(
+            label: 'Tentar novamente',
+            onPressed: () => _setChecked(documentId, checked),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     // Obter sessão para identificar se é candidato
-    final session = ref.watch(sessionProvider).value;
+    final sessionAsync = ref.watch(sessionProvider);
+    final session = sessionAsync.value;
     final isCandidato = session?.login == 'candidato@apuraqui.app';
 
     final items = isCandidato
         ? candidateChecklistMock
         : checklistDocumentosMock;
-    final documentosMarcados =
-        ref.watch(checkedDocumentIdsProvider).value ?? {};
+    final checkedDocumentIdsAsync = ref.watch(checkedDocumentIdsProvider);
+    final documentosMarcados = checkedDocumentIdsAsync.value ?? {};
 
     final completedCount = items
         .where((item) => documentosMarcados.contains(item.id))
@@ -133,6 +154,28 @@ class _ChecklistDocumentosPageState
               ],
             ),
             const SizedBox(height: 24),
+
+            if (sessionAsync.isLoading || checkedDocumentIdsAsync.isLoading)
+              const AppStateView.loading(
+                compact: true,
+                message: 'Carregando seu progresso...',
+              ),
+            if (sessionAsync.hasError) ...[
+              AppStateView.serverErrorCompact(
+                message:
+                    'Não foi possível recuperar sua sessão. O checklist padrão continua disponível.',
+                onRetry: () => ref.invalidate(sessionProvider),
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (checkedDocumentIdsAsync.hasError) ...[
+              AppStateView.serverErrorCompact(
+                message:
+                    'Não foi possível carregar seu progresso. Você ainda pode consultar o checklist.',
+                onRetry: () => ref.invalidate(checkedDocumentIdsProvider),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // Important Alert
             if (!isCandidato)
@@ -256,11 +299,7 @@ class _ChecklistDocumentosPageState
                   documento: item,
                   checked: documentosMarcados.contains(item.id),
                   isCandidato: isCandidato,
-                  onChanged: (marcado) {
-                    ref
-                        .read(checklistProgressRepositoryProvider)
-                        .setChecked(item.id, checked: marcado);
-                  },
+                  onChanged: (marcado) => _setChecked(item.id, marcado),
                 ),
               );
             }),

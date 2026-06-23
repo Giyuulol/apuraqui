@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/navigation/app_routes.dart';
 import '../../core/widgets/app_header.dart';
+import '../../core/widgets/app_state_view.dart';
 import '../perfil/data/candidates_mock.dart';
 import 'application/saved_santinhos_providers.dart';
 import 'data/santinhos_mock.dart';
@@ -28,10 +29,35 @@ class SantinhosPage extends ConsumerWidget {
     );
   }
 
+  Future<void> _toggleSaved(
+    BuildContext context,
+    WidgetRef ref,
+    String santinhoId,
+    bool saved,
+  ) async {
+    try {
+      await ref
+          .read(savedSantinhosRepositoryProvider)
+          .setSaved(santinhoId, saved: saved);
+    } on Object {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Não foi possível atualizar este santinho.'),
+          action: SnackBarAction(
+            label: 'Tentar novamente',
+            onPressed: () => _toggleSaved(context, ref, santinhoId, saved),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
-    final savedIds = ref.watch(savedSantinhoIdsProvider).value ?? {};
+    final savedIdsAsync = ref.watch(savedSantinhoIdsProvider);
+    final savedIds = savedIdsAsync.value ?? {};
 
     return Scaffold(
       appBar: AppHeader(
@@ -95,6 +121,19 @@ class SantinhosPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
+            if (savedIdsAsync.isLoading)
+              const AppStateView.loading(
+                compact: true,
+                message: 'Carregando seus santinhos salvos...',
+              ),
+            if (savedIdsAsync.hasError) ...[
+              AppStateView.serverErrorCompact(
+                message:
+                    'Não foi possível carregar seus santinhos salvos. Você ainda pode consultar os candidatos.',
+                onRetry: () => ref.invalidate(savedSantinhoIdsProvider),
+              ),
+              const SizedBox(height: 24),
+            ],
             for (var i = 0; i < santinhosMock.length; i++) ...[
               SantinhoCard(
                 item: santinhosMock[i],
@@ -104,9 +143,12 @@ class SantinhosPage extends ConsumerWidget {
                 saved: savedIds.contains(santinhosMock[i].id),
                 onToggleSave: () {
                   final isSaved = savedIds.contains(santinhosMock[i].id);
-                  return ref
-                      .read(savedSantinhosRepositoryProvider)
-                      .setSaved(santinhosMock[i].id, saved: !isSaved);
+                  return _toggleSaved(
+                    context,
+                    ref,
+                    santinhosMock[i].id,
+                    !isSaved,
+                  );
                 },
                 onViewProposals: () {
                   final candidateId = santinhosMock[i].candidateId;
