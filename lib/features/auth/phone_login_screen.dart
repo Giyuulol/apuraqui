@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'application/auth_providers.dart';
+import 'domain/brazilian_phone_number.dart';
 import 'domain/phone_verification.dart';
+import 'widgets/brazilian_phone_input_formatter.dart';
 
 class PhoneLoginScreen extends ConsumerStatefulWidget {
   const PhoneLoginScreen({super.key});
@@ -18,22 +22,33 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
   final _smsCodeController = TextEditingController();
 
   PhoneVerification? _verification;
+  BrazilianPhoneNumber? _phoneNumber;
+  Timer? _resendTimer;
+  int _resendSecondsRemaining = 0;
   String? _errorMessage;
+
+  static const _resendCooldown = Duration(seconds: 30);
 
   @override
   void dispose() {
+    _resendTimer?.cancel();
     _phoneController.dispose();
     _smsCodeController.dispose();
     super.dispose();
   }
 
-  Future<void> _requestCode() async {
-    if (!(_phoneFormKey.currentState?.validate() ?? false)) return;
+  Future<void> _requestCode({bool validateForm = true}) async {
+    if (validateForm && !(_phoneFormKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final phoneNumber = BrazilianPhoneNumber.tryParse(_phoneController.text);
+    if (phoneNumber == null) return;
 
     setState(() => _errorMessage = null);
     final verification = await ref
         .read(authControllerProvider.notifier)
-        .requestPhoneVerification(_phoneController.text.trim());
+        .requestPhoneVerification(phoneNumber.e164);
 
     if (!mounted) return;
 
@@ -47,7 +62,30 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
       return;
     }
 
-    setState(() => _verification = verification);
+    setState(() {
+      _phoneNumber = phoneNumber;
+      _phoneController.text = phoneNumber.formatted;
+      _verification = verification;
+      _resendSecondsRemaining = _resendCooldown.inSeconds;
+    });
+    _startResendCooldown();
+  }
+
+  Future<void> _resendCode() async {
+    if (_resendSecondsRemaining > 0) return;
+    await _requestCode(validateForm: false);
+  }
+
+  void _startResendCooldown() {
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || _resendSecondsRemaining <= 1) {
+        timer.cancel();
+        if (mounted) setState(() => _resendSecondsRemaining = 0);
+        return;
+      }
+      setState(() => _resendSecondsRemaining--);
+    });
   }
 
   Future<void> _confirmCode() async {
@@ -112,12 +150,18 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                 _CodeStep(
                   formKey: _codeFormKey,
                   controller: _smsCodeController,
-                  phoneNumber: _phoneController.text.trim(),
+                  phoneNumber: _phoneNumber?.formatted ?? _phoneController.text,
+                  isSending: isSending,
                   isLoading: isVerifying,
+                  resendSecondsRemaining: _resendSecondsRemaining,
                   onConfirm: _confirmCode,
+                  onResend: _resendCode,
                   onChangePhone: () {
+                    _resendTimer?.cancel();
                     setState(() {
                       _verification = null;
+                      _phoneNumber = null;
+                      _resendSecondsRemaining = 0;
                       _smsCodeController.clear();
                       _errorMessage = null;
                     });
@@ -214,19 +258,20 @@ class _PhoneStep extends StatelessWidget {
           TextFormField(
             controller: controller,
             keyboardType: TextInputType.phone,
+            autofillHints: const [AutofillHints.telephoneNumber],
+            inputFormatters: [BrazilianPhoneInputFormatter()],
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) {
+              if (!isLoading) onSubmit();
+            },
             decoration: const InputDecoration(
               labelText: 'Telefone',
-              hintText: '+5585999999999',
+              hintText: '+55 (85) 99999-9999',
               prefixIcon: Icon(Icons.phone_outlined),
             ),
             validator: (value) {
-              final phone = value?.trim() ?? '';
-              final digits = phone.replaceAll(RegExp(r'\D'), '');
-              if (!phone.startsWith('+')) {
-                return 'Use o formato internacional começando com +55';
-              }
-              if (digits.length < 12 || digits.length > 15) {
-                return 'Informe um telefone válido com DDD';
+              if (BrazilianPhoneNumber.tryParse(value ?? '') == null) {
+                return 'Informe DDD e telefone. Exemplo: (85) 99999-9999';
               }
               return null;
             },
@@ -257,16 +302,22 @@ class _CodeStep extends StatelessWidget {
     required this.formKey,
     required this.controller,
     required this.phoneNumber,
+    required this.isSending,
     required this.isLoading,
+    required this.resendSecondsRemaining,
     required this.onConfirm,
+    required this.onResend,
     required this.onChangePhone,
   });
 
   final GlobalKey<FormState> formKey;
   final TextEditingController controller;
   final String phoneNumber;
+  final bool isSending;
   final bool isLoading;
+  final int resendSecondsRemaining;
   final VoidCallback onConfirm;
+  final VoidCallback onResend;
   final VoidCallback onChangePhone;
 
   @override
@@ -286,6 +337,7 @@ class _CodeStep extends StatelessWidget {
             controller: controller,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            autofillHints: const [AutofillHints.oneTimeCode],
             textAlign: TextAlign.center,
             decoration: const InputDecoration(
               labelText: 'Código SMS',
@@ -316,8 +368,19 @@ class _CodeStep extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: isLoading || isSending || resendSecondsRemaining > 0
+                ? null
+                : onResend,
+            icon: const Icon(Icons.refresh_rounded),
+            label: Text(
+              resendSecondsRemaining > 0
+                  ? 'Reenviar em 00:${resendSecondsRemaining.toString().padLeft(2, '0')}'
+                  : 'Reenviar código',
+            ),
+          ),
           TextButton(
-            onPressed: isLoading ? null : onChangePhone,
+            onPressed: isLoading || isSending ? null : onChangePhone,
             child: const Text('Alterar telefone'),
           ),
         ],

@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "product": "ApurAqui",
+  "platforms": ["android", "ios"],
+  "statusValues": ["done", "planned", "blocked", "in_progress"],
+  "priorityValues": ["P0", "P1", "P2"],
+  "items": [
+    {
+      "id": "AUTH-001",
+      "title": "Login demo e por numero de telefone",
+      "area": "authentication",
+      "status": "done",
+      "priority": "P0",
+      "description": "Autentica por credenciais demo locais ou Firebase Phone Authentication sem acoplar a UI ao SDK.",
+      "acceptanceCriteria": [
+        "O login demo continua funcional.",
+        "Um numero em formato E.164 pode solicitar e confirmar um codigo SMS.",
+        "Erros de Firebase sao apresentados com mensagens compreensiveis.",
+        "Logout limpa a sessao ativa."
+      ],
+      "dependencies": ["Firebase Authentication"],
+      "testCoverage": ["unit", "widget", "device_manual"]
+    },
+    {
+      "id": "SEC-001",
+      "title": "Separar ambientes Firebase",
+      "area": "security",
+      "status": "planned",
+      "priority": "P0",
+      "description": "Criar projetos Firebase distintos para development e production e impedir que testes consumam recursos de producao.",
+      "acceptanceCriteria": [
+        "Cada flavor aponta para seu proprio projeto Firebase.",
+        "SMS de teste nao usa quotas de producao.",
+        "Nenhuma service account, chave de assinatura ou segredo esta versionado."
+      ],
+      "dependencies": ["Definicao de flavors Flutter", "Firebase Console"],
+      "testCoverage": ["build_configuration", "manual"]
+    },
+    {
+      "id": "SEC-002",
+      "title": "Configurar Firebase App Check",
+      "area": "security",
+      "status": "planned",
+      "priority": "P0",
+      "description": "Proteger recursos Firebase futuros contra clientes nao autorizados; Phone Auth continua protegido pelos mecanismos proprios do provider.",
+      "acceptanceCriteria": [
+        "App Check usa provedores validos em Android e iOS.",
+        "O modo de monitoramento e avaliado antes da aplicacao obrigatoria.",
+        "Falhas de atestacao possuem observabilidade sem bloquear usuarios validos indevidamente."
+      ],
+      "dependencies": ["SEC-001", "Firebase App Check"],
+      "testCoverage": ["device_manual", "console_validation"]
+    },
+    {
+      "id": "SEC-003",
+      "title": "Privacidade e consentimento para Phone Auth",
+      "area": "security",
+      "status": "planned",
+      "priority": "P0",
+      "description": "Informar o uso do numero telefonico e registrar o consentimento necessario antes da solicitacao de SMS.",
+      "acceptanceCriteria": [
+        "A tela explica a finalidade do numero e aponta para a politica de privacidade.",
+        "O usuario pode cancelar antes do envio do codigo.",
+        "A retencao e exclusao de dados possuem responsavel definido."
+      ],
+      "dependencies": ["Politica de privacidade", "Definicao juridica/LGPD"],
+      "testCoverage": ["widget", "manual"]
+    },
+    {
+      "id": "SEC-004",
+      "title": "Automatizar verificacao de dependencias e configuracao",
+      "area": "security",
+      "status": "planned",
+      "priority": "P1",
+      "description": "Executar analise, testes e auditoria de dependencias em CI antes de merge ou release.",
+      "acceptanceCriteria": [
+        "CI executa formatacao, analyze e test.",
+        "Atualizacoes de dependencias recebem revisao automatizada.",
+        "Arquivos ignorados e configuracoes nativas sao revisados no pipeline de release."
+      ],
+      "dependencies": ["Provedor de CI"],
+      "testCoverage": ["pipeline"]
+    },
+    {
+      "id": "UX-001",
+      "title": "Auditoria de acessibilidade",
+      "area": "usability",
+      "status": "planned",
+      "priority": "P0",
+      "description": "Garantir navegacao por leitor de tela, foco coerente, contraste e escalonamento de texto nos fluxos principais.",
+      "acceptanceCriteria": [
+        "Controles icon-only possuem semantic labels.",
+        "Login, telefone e SMS funcionam com texto ampliado.",
+        "Erros sao anunciados de forma acessivel e nao dependem somente de cor."
+      ],
+      "dependencies": [],
+      "testCoverage": ["widget", "device_manual"]
+    },
+    {
+      "id": "UX-002",
+      "title": "Estados padronizados de carregamento e falha",
+      "area": "usability",
+      "status": "planned",
+      "priority": "P1",
+      "description": "Padronizar loading, empty, retry, offline e erro em todas as features com dados assincronos.",
+      "acceptanceCriteria": [
+        "Cada requisicao remota possui loading e retry acessiveis.",
+        "Mensagens nao expoem detalhes tecnicos ou dados sensiveis.",
+        "A tela permanece navegavel quando uma fonte remota falha."
+      ],
+      "dependencies": ["UX-001"],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "UX-003",
+      "title": "Melhorar a entrada de telefone e codigo SMS",
+      "area": "usability",
+      "status": "done",
+      "priority": "P1",
+      "description": "Aplicar mascara visual, validacao E.164 e reenvio com cooldown sem alterar o contrato de autenticacao.",
+      "acceptanceCriteria": [
+        "O campo aceita digitacao comum e normaliza para E.164 antes do repository.",
+        "O usuario entende quando pode reenviar o codigo.",
+        "O fluxo trata timeout e codigo invalido sem perder o numero informado."
+      ],
+      "dependencies": ["AUTH-001"],
+      "testCoverage": ["unit", "widget", "device_manual"]
+    },
+    {
+      "id": "UX-004",
+      "title": "Controle de consentimentos e dados locais",
+      "area": "usability",
+      "status": "planned",
+      "priority": "P1",
+      "description": "Oferecer uma area de privacidade para consultar consentimentos, sair da conta e remover dados locais do dispositivo.",
+      "acceptanceCriteria": [
+        "O usuario consegue encerrar a sessao atual.",
+        "O usuario consegue apagar dados locais com confirmacao explicita.",
+        "A acao informa o que permanece em servicos remotos quando eles existirem."
+      ],
+      "dependencies": ["SEC-003"],
+      "testCoverage": ["widget", "integration"]
+    },
+    {
+      "id": "DATA-001",
+      "title": "Definir fontes oficiais e proveniencia de dados",
+      "area": "data",
+      "status": "planned",
+      "priority": "P0",
+      "description": "Especificar contratos para candidatos, noticias, locais e apuracao antes de trocar mocks por integracoes.",
+      "acceptanceCriteria": [
+        "Cada entidade possui origem, data de atualizacao e politica de cache.",
+        "Dados sem fonte ou expirados sao identificados na interface.",
+        "Contratos de repository sao definidos antes dos adapters HTTP."
+      ],
+      "dependencies": ["Acesso a fontes oficiais"],
+      "testCoverage": ["unit", "contract"]
+    },
+    {
+      "id": "DATA-002",
+      "title": "Backend para dados por usuario",
+      "area": "data",
+      "status": "blocked",
+      "priority": "P0",
+      "description": "Criar API ou backend gerenciado somente quando houver requisito de sincronizar dados pessoais entre dispositivos.",
+      "acceptanceCriteria": [
+        "A autorizacao usa o uid autenticado como fronteira de acesso.",
+        "Regras de acesso possuem testes de allow e deny.",
+        "Dados sensiveis possuem minimizacao, retencao e exclusao definidas."
+      ],
+      "dependencies": ["DATA-001", "SEC-001", "SEC-002", "SEC-003"],
+      "testCoverage": ["integration", "security_rules"]
+    },
+    {
+      "id": "DATA-003",
+      "title": "Substituir mocks por repositorios remotos com cache",
+      "area": "data",
+      "status": "planned",
+      "priority": "P1",
+      "description": "Migrar cada feature de dados mockados para adapters remotos de forma incremental, preservando o contrato de repository e o funcionamento offline.",
+      "acceptanceCriteria": [
+        "Cada adapter remoto implementa um contrato definido no domain.",
+        "Cache local apresenta a ultima informacao valida quando a rede falha.",
+        "A interface identifica informacoes desatualizadas e oferece nova tentativa."
+      ],
+      "dependencies": ["DATA-001"],
+      "testCoverage": ["unit", "integration", "widget"]
+    },
+    {
+      "id": "PLT-001",
+      "title": "Distribuicao beta por TestFlight e Android",
+      "area": "platform",
+      "status": "planned",
+      "priority": "P1",
+      "description": "Definir pipeline de builds assinadas para validacao em dispositivos reais antes de releases publicos.",
+      "acceptanceCriteria": [
+        "Uma build iOS e uma Android podem ser instaladas por testers autorizados.",
+        "Configuracoes de development e production nao se misturam.",
+        "O Phone Auth e validado em dispositivo real antes de cada release."
+      ],
+      "dependencies": ["SEC-001", "Apple Developer Program", "Google Play Console"],
+      "testCoverage": ["device_manual", "release_checklist"]
+    }
+  ]
+}

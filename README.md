@@ -197,3 +197,7 @@ Esta fase é focada em **front-end mobile funcional**. O app não usa backend, A
 - Integrar fontes oficiais (TSE, APIs públicas) quando os contratos estiverem definidos.
 - Substituir mocks por repositórios remotos com cache local.
 - Implementar push notifications para atualizações de apuração ao vivo.
+
+O estado verificável do produto, riscos e ordem de implementação estão em
+[`PROGRESS.md`](PROGRESS.md). O backlog estruturado, com prioridades,
+dependências e critérios de aceite, está em [`feature_list.json`](feature_list.json).
