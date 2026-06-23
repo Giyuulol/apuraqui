@@ -5,8 +5,8 @@ class BrazilianPhoneNumber {
   final String e164;
   final String formatted;
 
-  /// Aceita numero nacional ou internacional e remove apenas caracteres de
-  /// apresentacao, como espacos, parenteses e hifens.
+  /// Aceita numero de celular nacional ou internacional e remove apenas
+  /// caracteres de apresentacao, como espacos, parenteses e hifens.
   static BrazilianPhoneNumber? tryParse(String value) {
     final digits = value.replaceAll(RegExp(r'\D'), '');
     final nationalNumber = switch (digits.length) {
@@ -26,16 +26,14 @@ class BrazilianPhoneNumber {
   }
 
   static bool _isValidNationalNumber(String value) {
-    if (!RegExp(r'^[1-9]\d{9,10}$').hasMatch(value)) return false;
-
-    final localNumber = value.substring(2);
-    return localNumber.length == 8 || localNumber.length == 9;
+    // Phone Auth envia um SMS. No Brasil, somente celulares possuem os nove
+    // digitos locais iniciados por 9; telefones fixos nao sao destinos validos.
+    return RegExp(r'^[1-9][1-9]9\d{8}$').hasMatch(value);
   }
 
   static String _formatNationalNumber(String value) {
     final ddd = value.substring(0, 2);
     final localNumber = value.substring(2);
-    final splitAt = localNumber.length == 9 ? 5 : 4;
-    return '+55 ($ddd) ${localNumber.substring(0, splitAt)}-${localNumber.substring(splitAt)}';
+    return '+55 ($ddd) ${localNumber.substring(0, 5)}-${localNumber.substring(5)}';
   }
 }

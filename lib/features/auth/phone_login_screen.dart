@@ -223,7 +223,7 @@ class _PhoneAuthHeader extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Use o número em formato internacional para receber o código de acesso.',
+          'Use um número de celular com DDD para receber o código de acesso.',
           textAlign: TextAlign.center,
           style: textTheme.bodyMedium?.copyWith(
             color: const Color(0xFF6B7280),
@@ -271,7 +271,7 @@ class _PhoneStep extends StatelessWidget {
             ),
             validator: (value) {
               if (BrazilianPhoneNumber.tryParse(value ?? '') == null) {
-                return 'Informe DDD e telefone. Exemplo: (85) 99999-9999';
+                return 'Informe um celular com DDD. Exemplo: (85) 99999-9999';
               }
               return null;
             },

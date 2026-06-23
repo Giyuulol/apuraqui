@@ -27,6 +27,12 @@ dev_dependencies:
   build_runner: ^2.15.0
   drift_dev: ^2.33.0
 
+# path_provider_foundation 2.6.0 usa Objective-C FFI/native assets que falham
+# no iOS Simulator com a toolchain atual. A 2.5.1 usa a implementacao plugin
+# estavel e continua compativel com o Flutter/Dart deste projeto.
+dependency_overrides:
+  path_provider_foundation: 2.5.1
+
 flutter:
   uses-material-design: true
 

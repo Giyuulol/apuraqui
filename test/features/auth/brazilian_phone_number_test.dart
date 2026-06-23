@@ -15,6 +15,10 @@ void main() {
     expect(phoneNumber?.e164, '+5585999999999');
   });
 
+  test('rejeita telefone fixo porque Phone Auth exige destino SMS', () {
+    expect(BrazilianPhoneNumber.tryParse('(85) 9999-9999'), isNull);
+  });
+
   test('rejeita telefone sem DDD e numero completo', () {
     expect(BrazilianPhoneNumber.tryParse('99999-9999'), isNull);
   });

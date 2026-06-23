@@ -128,6 +128,20 @@ class FirebaseAuthRepository implements SessionRepository {
         AuthExceptionCode.tooManyRequests,
         'Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.',
       ),
+      'internal-error' => const AuthException(
+        AuthExceptionCode.unavailable,
+        'O Firebase não conseguiu enviar o SMS. Confirme se o número é um celular e tente novamente mais tarde.',
+      ),
+      'captcha-check-failed' ||
+      'invalid-app-credential' ||
+      'app-not-authorized' => const AuthException(
+        AuthExceptionCode.unavailable,
+        'Não foi possível validar este aplicativo. Feche e abra o app novamente antes de tentar.',
+      ),
+      'operation-not-allowed' => const AuthException(
+        AuthExceptionCode.unavailable,
+        'O login por telefone não está habilitado neste ambiente.',
+      ),
       'network-request-failed' => const AuthException(
         AuthExceptionCode.unavailable,
         'Não foi possível conectar ao Firebase. Verifique sua conexão.',
