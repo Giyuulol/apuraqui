@@ -1,0 +1,5 @@
+# Artefatos gerados pelo Flutter — não versionar.
+# macOS está fora do escopo do produto (apenas Android e iOS): estes arquivos
+# são regenerados por `flutter run`/`flutter pub get` e só geram ruído no git.
+**/Flutter/ephemeral/
+**/Flutter/GeneratedPluginRegistrant.swift
