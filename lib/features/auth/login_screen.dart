@@ -148,37 +148,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF111827),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF111827),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Tentar Novamente'),
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Tentar Novamente'),
                 ),
               ),
               const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF002776),
-                    side: const BorderSide(color: Color(0xFF002776), width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF002776),
+                      side: const BorderSide(
+                        color: Color(0xFF002776),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleForgotPassword();
+                    },
+                    child: const Text('Esqueci minha senha'),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _handleForgotPassword();
-                  },
-                  child: const Text('Esqueci minha senha'),
                 ),
               ),
             ],
@@ -409,8 +416,8 @@ class _LoginCard extends StatelessWidget {
             const SizedBox(height: 22),
             const _DividerLabel(),
             const SizedBox(height: 18),
-            SizedBox(
-              height: 50,
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 50),
               child: FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF002776),
@@ -429,8 +436,8 @@ class _LoginCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 50,
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 50),
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF002776),
@@ -592,8 +599,8 @@ class _PrimaryLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 52),
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: const LinearGradient(

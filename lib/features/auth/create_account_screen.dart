@@ -491,6 +491,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               hintText: 'Mínimo 8 caracteres',
                               prefixIcon: Icons.lock_outline,
                               suffixIcon: IconButton(
+                                tooltip: _obscurePassword
+                                    ? 'Mostrar senha'
+                                    : 'Ocultar senha',
                                 onPressed: () => setState(
                                   () => _obscurePassword = !_obscurePassword,
                                 ),
@@ -518,6 +521,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               hintText: 'Confirme sua senha',
                               prefixIcon: Icons.lock_outline,
                               suffixIcon: IconButton(
+                                tooltip: _obscureConfirmPassword
+                                    ? 'Mostrar senha'
+                                    : 'Ocultar senha',
                                 onPressed: () => setState(
                                   () => _obscureConfirmPassword =
                                       !_obscureConfirmPassword,
@@ -540,7 +546,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           const SizedBox(height: 28),
                           // Action Button
                           Container(
-                            height: 52,
+                            constraints: const BoxConstraints(minHeight: 52),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [Color(0xFF009B3A), Color(0xFF002776)],
@@ -571,12 +577,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'Criar Conta',
-                                    style: textTheme.labelLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 15,
+                                  Flexible(
+                                    child: Text(
+                                      'Criar Conta',
+                                      textAlign: TextAlign.center,
+                                      style: textTheme.labelLarge?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 8),

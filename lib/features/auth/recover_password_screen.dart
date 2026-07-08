@@ -138,8 +138,8 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              SizedBox(
-                height: 52,
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 52),
                 child: ElevatedButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.mail_outline),
@@ -256,15 +256,17 @@ class PasswordRecoverySentScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.of(
-                      context,
-                    ).popUntil((route) => route.isFirst),
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('Voltar ao Login'),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 52),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => Navigator.of(
+                        context,
+                      ).popUntil((route) => route.isFirst),
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text('Voltar ao Login'),
+                    ),
                   ),
                 ),
               ],

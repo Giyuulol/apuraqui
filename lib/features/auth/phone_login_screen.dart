@@ -277,8 +277,8 @@ class _PhoneStep extends StatelessWidget {
             },
           ),
           const SizedBox(height: 18),
-          SizedBox(
-            height: 52,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 52),
             child: ElevatedButton.icon(
               onPressed: isLoading ? null : onSubmit,
               icon: isLoading
@@ -353,8 +353,8 @@ class _CodeStep extends StatelessWidget {
             },
           ),
           const SizedBox(height: 18),
-          SizedBox(
-            height: 52,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 52),
             child: ElevatedButton.icon(
               onPressed: isLoading ? null : onConfirm,
               icon: isLoading
@@ -396,26 +396,32 @@ class _ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFE4E4),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.error_outline, color: Color(0xFFE10600)),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF7F1D1D)),
+    // liveRegion anuncia o erro em leitores de tela assim que ele aparece;
+    // o ícone garante que a mensagem não dependa apenas da cor.
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFE4E4),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.error_outline, color: Color(0xFFE10600)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: const Color(0xFF7F1D1D),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -664,19 +664,23 @@ class _CandidateSelectorSheet extends StatelessWidget {
                     ),
                   ),
                   // Botão X circular
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F6),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        color: Color(0xFF6B7280),
-                        size: 20,
+                  Semantics(
+                    button: true,
+                    label: 'Fechar',
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Color(0xFF6B7280),
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),

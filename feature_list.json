@@ -1,204 +1,425 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "product": "ApurAqui",
   "platforms": ["android", "ios"],
-  "statusValues": ["done", "planned", "blocked", "in_progress"],
+  "lastUpdated": "2026-07-08",
+  "statusValues": ["planned", "in_progress", "blocked", "done"],
   "priorityValues": ["P0", "P1", "P2"],
+  "areaValues": ["feature", "authentication", "security", "usability", "data", "platform"],
   "items": [
     {
-      "id": "AUTH-001",
-      "title": "Login demo e por numero de telefone",
-      "area": "authentication",
+      "id": "FEAT-001",
+      "title": "Splash inicial",
+      "area": "feature",
+      "module": "lib/features/splash",
+      "status": "done",
+      "priority": "P2",
+      "owner": null,
+      "description": "Tela de abertura que apresenta a marca e encaminha para o fluxo inicial do app.",
+      "acceptanceCriteria": [
+        "A splash é exibida na inicialização e transiciona para a próxima rota sem travar.",
+        "A identidade visual segue os tokens do design system.",
+        "A transição respeita reduções de movimento e escalonamento de texto."
+      ],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-002",
+      "title": "Dashboard com menu, indicadores e resultados",
+      "area": "feature",
+      "module": "lib/features/dashboard",
+      "status": "done",
+      "priority": "P1",
+      "owner": null,
+      "description": "Tela central de navegação com drawer de protótipo, cards de indicadores e aba de resultados/apuração baseada em mocks.",
+      "acceptanceCriteria": [
+        "O menu dá acesso às demais features do app.",
+        "Os cards de indicadores e a aba de resultados renderizam a partir da fonte mockada.",
+        "O layout permanece responsivo sob texto ampliado e telas estreitas."
+      ],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-003",
+      "title": "Perfil de candidatos e plano de governo",
+      "area": "feature",
+      "module": "lib/features/perfil",
       "status": "done",
       "priority": "P0",
+      "owner": null,
+      "description": "Consulta de candidatos com seletor, dados de identidade e itens do plano de governo. Atualmente servido por mocks.",
+      "acceptanceCriteria": [
+        "O usuário seleciona um candidato e vê perfil e plano de governo.",
+        "Os dados vêm de uma única fonte de domínio reutilizável entre telas.",
+        "Informações mockadas ficam evidentes até existir fonte oficial."
+      ],
+      "dependsOn": ["DATA-003"],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-004",
+      "title": "Comparador de propostas",
+      "area": "feature",
+      "module": "lib/features/comparador",
+      "status": "done",
+      "priority": "P1",
+      "owner": null,
+      "description": "Comparação lado a lado de propostas por tema entre candidatos, reutilizando os modelos de domínio do perfil.",
+      "acceptanceCriteria": [
+        "O usuário compara propostas de candidatos por tema.",
+        "Os dados de candidato e proposta não são duplicados em relação ao perfil.",
+        "O layout de comparação permanece legível em telas estreitas."
+      ],
+      "dependsOn": ["FEAT-003"],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-005",
+      "title": "Santinhos com salvamento local",
+      "area": "feature",
+      "module": "lib/features/santinho",
+      "status": "done",
+      "priority": "P0",
+      "owner": null,
+      "description": "Listagem de santinhos com imagem, número oficial e ações de salvar; a preferência de salvamento é persistida localmente via Drift/SQLite.",
+      "acceptanceCriteria": [
+        "O usuário salva e remove santinhos, com o estado persistido entre sessões.",
+        "A hierarquia segue o protótipo do Figma: imagem principal, identidade, número em destaque e ação primária de salvar.",
+        "O repositório Drift é coberto por testes de persistência com SQLite em memória."
+      ],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "testCoverage": ["unit", "widget"]
+    },
+    {
+      "id": "FEAT-006",
+      "title": "Central de notícias e checagem de fake news",
+      "area": "feature",
+      "module": "lib/features/noticias",
+      "status": "done",
+      "priority": "P1",
+      "owner": null,
+      "description": "Feed de notícias e cartões de checagem de desinformação, atualmente servidos por mocks.",
+      "acceptanceCriteria": [
+        "O usuário navega pelo feed de notícias e pelos cartões de checagem.",
+        "Conteúdo de checagem distingue claramente informação verdadeira de falsa.",
+        "Dados mockados ficam identificados até existir fonte oficial."
+      ],
+      "dependsOn": ["DATA-003"],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-007",
+      "title": "Local de votação",
+      "area": "feature",
+      "module": "lib/features/local_votacao",
+      "status": "done",
+      "priority": "P1",
+      "owner": null,
+      "description": "Consulta do local de votação do eleitor com cartão de endereço e seção, servida por mock.",
+      "acceptanceCriteria": [
+        "O usuário visualiza o local de votação a partir da fonte mockada.",
+        "As informações essenciais permanecem legíveis em telas estreitas.",
+        "Dados mockados ficam identificados até existir integração oficial."
+      ],
+      "dependsOn": ["DATA-003"],
+      "externalDependencies": [],
+      "testCoverage": ["widget"]
+    },
+    {
+      "id": "FEAT-008",
+      "title": "Leitor de QR Code",
+      "area": "feature",
+      "module": "lib/features/leitor_qr",
+      "status": "done",
+      "priority": "P1",
+      "owner": null,
+      "description": "Leitura de QR Code pela câmera com preview e mira, integrada à navegação do app.",
+      "acceptanceCriteria": [
+        "A câmera abre e reconhece um QR Code válido.",
+        "A ausência de permissão de câmera é tratada com mensagem acessível e caminho de recuperação.",
+        "A tela não expõe detalhes técnicos em caso de falha do scanner."
+      ],
+      "dependsOn": ["SEC-005"],
+      "externalDependencies": [],
+      "testCoverage": ["widget", "device_manual"]
+    },
+    {
+      "id": "FEAT-009",
+      "title": "Checklist de documentos para votação",
+      "area": "feature",
+      "module": "lib/features/votacao",
+      "status": "done",
+      "priority": "P0",
+      "owner": null,
+      "description": "Checklist de documentos necessários para votar, com progresso persistido localmente via Drift/SQLite.",
+      "acceptanceCriteria": [
+        "O usuário marca e desmarca itens, com o progresso mantido entre sessões.",
+        "O repositório Drift é coberto por testes de persistência com SQLite em memória.",
+        "O checklist permanece navegável e legível sob texto ampliado."
+      ],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "testCoverage": ["unit", "widget"]
+    },
+    {
+      "id": "AUTH-001",
+      "title": "Login demo e por número de telefone",
+      "area": "authentication",
+      "module": "lib/features/auth",
+      "status": "done",
+      "priority": "P0",
+      "owner": null,
       "description": "Autentica por credenciais demo locais ou Firebase Phone Authentication sem acoplar a UI ao SDK.",
       "acceptanceCriteria": [
         "O login demo continua funcional.",
-        "Um numero em formato E.164 pode solicitar e confirmar um codigo SMS.",
-        "Erros de Firebase sao apresentados com mensagens compreensiveis.",
-        "Logout limpa a sessao ativa."
+        "Um número em formato E.164 pode solicitar e confirmar um código SMS.",
+        "Erros de Firebase são apresentados com mensagens compreensíveis.",
+        "Logout limpa a sessão ativa."
       ],
-      "dependencies": ["Firebase Authentication"],
+      "dependsOn": [],
+      "externalDependencies": ["Firebase Authentication"],
       "testCoverage": ["unit", "widget", "device_manual"]
     },
     {
       "id": "SEC-001",
       "title": "Separar ambientes Firebase",
       "area": "security",
+      "module": null,
       "status": "planned",
       "priority": "P0",
-      "description": "Criar projetos Firebase distintos para development e production e impedir que testes consumam recursos de producao.",
+      "owner": null,
+      "description": "Criar projetos Firebase distintos para development e production e impedir que testes consumam recursos de produção.",
       "acceptanceCriteria": [
-        "Cada flavor aponta para seu proprio projeto Firebase.",
-        "SMS de teste nao usa quotas de producao.",
-        "Nenhuma service account, chave de assinatura ou segredo esta versionado."
+        "Cada flavor aponta para seu próprio projeto Firebase.",
+        "SMS de teste não usa quotas de produção.",
+        "Nenhuma service account, chave de assinatura ou segredo está versionado."
       ],
-      "dependencies": ["Definicao de flavors Flutter", "Firebase Console"],
+      "dependsOn": [],
+      "externalDependencies": ["Definição de flavors Flutter", "Firebase Console"],
       "testCoverage": ["build_configuration", "manual"]
     },
     {
       "id": "SEC-002",
       "title": "Configurar Firebase App Check",
       "area": "security",
+      "module": null,
       "status": "planned",
       "priority": "P0",
-      "description": "Proteger recursos Firebase futuros contra clientes nao autorizados; Phone Auth continua protegido pelos mecanismos proprios do provider.",
+      "owner": null,
+      "description": "Proteger recursos Firebase futuros contra clientes não autorizados; Phone Auth continua protegido pelos mecanismos próprios do provider.",
       "acceptanceCriteria": [
-        "App Check usa provedores validos em Android e iOS.",
-        "O modo de monitoramento e avaliado antes da aplicacao obrigatoria.",
-        "Falhas de atestacao possuem observabilidade sem bloquear usuarios validos indevidamente."
+        "App Check usa provedores válidos em Android e iOS.",
+        "O modo de monitoramento é avaliado antes da aplicação obrigatória.",
+        "Falhas de atestação possuem observabilidade sem bloquear usuários válidos indevidamente."
       ],
-      "dependencies": ["SEC-001", "Firebase App Check"],
+      "dependsOn": ["SEC-001"],
+      "externalDependencies": ["Firebase App Check"],
       "testCoverage": ["device_manual", "console_validation"]
     },
     {
       "id": "SEC-003",
       "title": "Privacidade e consentimento para Phone Auth",
       "area": "security",
+      "module": null,
       "status": "planned",
       "priority": "P0",
-      "description": "Informar o uso do numero telefonico e registrar o consentimento necessario antes da solicitacao de SMS.",
+      "owner": null,
+      "description": "Informar o uso do número telefônico e registrar o consentimento necessário antes da solicitação de SMS.",
       "acceptanceCriteria": [
-        "A tela explica a finalidade do numero e aponta para a politica de privacidade.",
-        "O usuario pode cancelar antes do envio do codigo.",
-        "A retencao e exclusao de dados possuem responsavel definido."
+        "A tela explica a finalidade do número e aponta para a política de privacidade.",
+        "O usuário pode cancelar antes do envio do código.",
+        "A retenção e exclusão de dados possuem responsável definido."
       ],
-      "dependencies": ["Politica de privacidade", "Definicao juridica/LGPD"],
+      "dependsOn": [],
+      "externalDependencies": ["Política de privacidade", "Definição jurídica/LGPD"],
       "testCoverage": ["widget", "manual"]
     },
     {
       "id": "SEC-004",
-      "title": "Automatizar verificacao de dependencias e configuracao",
+      "title": "Automatizar verificação de dependências e configuração",
       "area": "security",
+      "module": null,
       "status": "planned",
       "priority": "P1",
-      "description": "Executar analise, testes e auditoria de dependencias em CI antes de merge ou release.",
+      "owner": null,
+      "description": "Executar análise, testes e auditoria de dependências em CI antes de merge ou release.",
       "acceptanceCriteria": [
-        "CI executa formatacao, analyze e test.",
-        "Atualizacoes de dependencias recebem revisao automatizada.",
-        "Arquivos ignorados e configuracoes nativas sao revisados no pipeline de release."
+        "CI executa formatação, analyze e test.",
+        "Atualizações de dependências recebem revisão automatizada.",
+        "Arquivos ignorados e configurações nativas são revisados no pipeline de release."
       ],
-      "dependencies": ["Provedor de CI"],
+      "dependsOn": [],
+      "externalDependencies": ["Provedor de CI"],
       "testCoverage": ["pipeline"]
+    },
+    {
+      "id": "SEC-005",
+      "title": "Privacidade e permissão de câmera para o leitor de QR",
+      "area": "security",
+      "module": "lib/features/leitor_qr",
+      "status": "planned",
+      "priority": "P1",
+      "owner": null,
+      "description": "Declarar a finalidade do acesso à câmera e tratar a concessão/negação de permissão antes de ativar o scanner.",
+      "acceptanceCriteria": [
+        "As permissões nativas de câmera estão declaradas em Android e iOS com descrição de uso.",
+        "A negação de permissão apresenta orientação acessível e caminho para as configurações.",
+        "Nenhuma imagem da câmera é persistida ou transmitida sem finalidade explícita."
+      ],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "testCoverage": ["widget", "device_manual"]
     },
     {
       "id": "UX-001",
       "title": "Auditoria de acessibilidade",
       "area": "usability",
-      "status": "planned",
+      "module": null,
+      "status": "done",
       "priority": "P0",
-      "description": "Garantir navegacao por leitor de tela, foco coerente, contraste e escalonamento de texto nos fluxos principais.",
+      "owner": null,
+      "description": "Garantir navegação por leitor de tela, foco coerente, contraste e escalonamento de texto nos fluxos principais.",
       "acceptanceCriteria": [
         "Controles icon-only possuem semantic labels.",
         "Login, telefone e SMS funcionam com texto ampliado.",
-        "Erros sao anunciados de forma acessivel e nao dependem somente de cor."
+        "Erros são anunciados de forma acessível e não dependem somente de cor."
       ],
-      "dependencies": [],
+      "dependsOn": [],
+      "externalDependencies": [],
       "testCoverage": ["widget", "device_manual"]
     },
     {
       "id": "UX-002",
       "title": "Estados padronizados de carregamento e falha",
       "area": "usability",
+      "module": null,
       "status": "done",
       "priority": "P1",
-      "description": "Padronizar loading, empty, retry, offline e erro em todas as features com dados assincronos.",
+      "owner": null,
+      "description": "Padronizar loading, empty, retry, offline e erro em todas as features com dados assíncronos.",
       "acceptanceCriteria": [
-        "Cada requisicao remota possui loading e retry acessiveis.",
-        "Mensagens nao expoem detalhes tecnicos ou dados sensiveis.",
-        "A tela permanece navegavel quando uma fonte remota falha."
+        "Cada requisição remota possui loading e retry acessíveis.",
+        "Mensagens não expõem detalhes técnicos ou dados sensíveis.",
+        "A tela permanece navegável quando uma fonte remota falha."
       ],
-      "dependencies": ["UX-001"],
+      "dependsOn": ["UX-001"],
+      "externalDependencies": [],
       "testCoverage": ["widget"]
     },
     {
       "id": "UX-003",
-      "title": "Melhorar a entrada de telefone e codigo SMS",
+      "title": "Melhorar a entrada de telefone e código SMS",
       "area": "usability",
+      "module": "lib/features/auth",
       "status": "done",
       "priority": "P1",
-      "description": "Aplicar mascara visual, validacao E.164 e reenvio com cooldown sem alterar o contrato de autenticacao.",
+      "owner": null,
+      "description": "Aplicar máscara visual, validação E.164 e reenvio com cooldown sem alterar o contrato de autenticação.",
       "acceptanceCriteria": [
-        "O campo aceita digitacao comum e normaliza para E.164 antes do repository.",
-        "O usuario entende quando pode reenviar o codigo.",
-        "O fluxo trata timeout e codigo invalido sem perder o numero informado."
+        "O campo aceita digitação comum e normaliza para E.164 antes do repository.",
+        "O usuário entende quando pode reenviar o código.",
+        "O fluxo trata timeout e código inválido sem perder o número informado."
       ],
-      "dependencies": ["AUTH-001"],
+      "dependsOn": ["AUTH-001"],
+      "externalDependencies": [],
       "testCoverage": ["unit", "widget", "device_manual"]
     },
     {
       "id": "UX-004",
       "title": "Controle de consentimentos e dados locais",
       "area": "usability",
+      "module": "lib/features/perfil",
       "status": "planned",
       "priority": "P1",
-      "description": "Oferecer uma area de privacidade para consultar consentimentos, sair da conta e remover dados locais do dispositivo.",
+      "owner": null,
+      "description": "Oferecer uma área de privacidade para consultar consentimentos, sair da conta e remover dados locais do dispositivo.",
       "acceptanceCriteria": [
-        "O usuario consegue encerrar a sessao atual.",
-        "O usuario consegue apagar dados locais com confirmacao explicita.",
-        "A acao informa o que permanece em servicos remotos quando eles existirem."
+        "O usuário consegue encerrar a sessão atual.",
+        "O usuário consegue apagar dados locais com confirmação explícita.",
+        "A ação informa o que permanece em serviços remotos quando eles existirem."
       ],
-      "dependencies": ["SEC-003"],
+      "dependsOn": ["SEC-003"],
+      "externalDependencies": [],
       "testCoverage": ["widget", "integration"]
     },
     {
       "id": "DATA-001",
-      "title": "Definir fontes oficiais e proveniencia de dados",
+      "title": "Definir fontes oficiais e proveniência de dados",
       "area": "data",
+      "module": null,
       "status": "planned",
       "priority": "P0",
-      "description": "Especificar contratos para candidatos, noticias, locais e apuracao antes de trocar mocks por integracoes.",
+      "owner": null,
+      "description": "Especificar contratos para candidatos, notícias, locais e apuração antes de trocar mocks por integrações.",
       "acceptanceCriteria": [
-        "Cada entidade possui origem, data de atualizacao e politica de cache.",
-        "Dados sem fonte ou expirados sao identificados na interface.",
-        "Contratos de repository sao definidos antes dos adapters HTTP."
+        "Cada entidade possui origem, data de atualização e política de cache.",
+        "Dados sem fonte ou expirados são identificados na interface.",
+        "Contratos de repository são definidos antes dos adapters HTTP."
       ],
-      "dependencies": ["Acesso a fontes oficiais"],
+      "dependsOn": [],
+      "externalDependencies": ["Acesso a fontes oficiais"],
       "testCoverage": ["unit", "contract"]
     },
     {
       "id": "DATA-002",
-      "title": "Backend para dados por usuario",
+      "title": "Backend para dados por usuário",
       "area": "data",
+      "module": null,
       "status": "blocked",
       "priority": "P0",
+      "owner": null,
       "description": "Criar API ou backend gerenciado somente quando houver requisito de sincronizar dados pessoais entre dispositivos.",
       "acceptanceCriteria": [
-        "A autorizacao usa o uid autenticado como fronteira de acesso.",
+        "A autorização usa o uid autenticado como fronteira de acesso.",
         "Regras de acesso possuem testes de allow e deny.",
-        "Dados sensiveis possuem minimizacao, retencao e exclusao definidas."
+        "Dados sensíveis possuem minimização, retenção e exclusão definidas."
       ],
-      "dependencies": ["DATA-001", "SEC-001", "SEC-002", "SEC-003"],
+      "dependsOn": ["DATA-001", "SEC-001", "SEC-002", "SEC-003"],
+      "externalDependencies": [],
       "testCoverage": ["integration", "security_rules"]
     },
     {
       "id": "DATA-003",
-      "title": "Substituir mocks por repositorios remotos com cache",
+      "title": "Substituir mocks por repositórios remotos com cache",
       "area": "data",
+      "module": null,
       "status": "planned",
       "priority": "P1",
+      "owner": null,
       "description": "Migrar cada feature de dados mockados para adapters remotos de forma incremental, preservando o contrato de repository e o funcionamento offline.",
       "acceptanceCriteria": [
         "Cada adapter remoto implementa um contrato definido no domain.",
-        "Cache local apresenta a ultima informacao valida quando a rede falha.",
-        "A interface identifica informacoes desatualizadas e oferece nova tentativa."
+        "Cache local apresenta a última informação válida quando a rede falha.",
+        "A interface identifica informações desatualizadas e oferece nova tentativa."
       ],
-      "dependencies": ["DATA-001"],
+      "dependsOn": ["DATA-001"],
+      "externalDependencies": [],
       "testCoverage": ["unit", "integration", "widget"]
     },
     {
       "id": "PLT-001",
-      "title": "Distribuicao beta por TestFlight e Android",
+      "title": "Distribuição beta por TestFlight e Android",
       "area": "platform",
+      "module": null,
       "status": "planned",
       "priority": "P1",
-      "description": "Definir pipeline de builds assinadas para validacao em dispositivos reais antes de releases publicos.",
+      "owner": null,
+      "description": "Definir pipeline de builds assinadas para validação em dispositivos reais antes de releases públicos.",
       "acceptanceCriteria": [
         "Uma build iOS e uma Android podem ser instaladas por testers autorizados.",
-        "Configuracoes de development e production nao se misturam.",
-        "O Phone Auth e validado em dispositivo real antes de cada release."
+        "Configurações de development e production não se misturam.",
+        "O Phone Auth é validado em dispositivo real antes de cada release."
       ],
-      "dependencies": ["SEC-001", "Apple Developer Program", "Google Play Console"],
+      "dependsOn": ["SEC-001"],
+      "externalDependencies": ["Apple Developer Program", "Google Play Console"],
       "testCoverage": ["device_manual", "release_checklist"]
     }
   ]

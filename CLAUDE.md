@@ -1,4 +1,4 @@
-# Project Instructions for Codex
+# Project Instructions for Claude Code
 
 ## Communication
 
@@ -62,7 +62,7 @@
 
 ## Git Hygiene
 
-- Do not commit `node_modules/`, `.codex/`, editor-local configuration, or Node tooling added only for local experimentation.
+- Do not commit `node_modules/`, editor-local configuration, or Node tooling added only for local experimentation.
 - Do not discard existing user changes.
 - When a collaborator branch contains generated or local-only files, import the useful Flutter files selectively.
 - Do not run `flutter clean` or remove `.dart_tool/` while a developer session is using `flutter run`; it breaks hot reload until `flutter pub get` regenerates package metadata.
@@ -80,8 +80,3 @@ flutter test
 git diff --check
 git diff --cached --check
 ```
-
-## Optional Tooling
-
-- If the `run_pipeline` MCP tool is available, prefer it for indexed repository context.
-- If it is unavailable, continue with local Git and filesystem tools and state the fallback. Optional tooling must not block repository work.
