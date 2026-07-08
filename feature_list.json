@@ -1,11 +1,34 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "product": "ApurAqui",
+  "source": "PRD.md",
+  "sourceVersion": "1.0",
   "platforms": ["android", "ios"],
   "lastUpdated": "2026-07-08",
   "statusValues": ["planned", "in_progress", "blocked", "done"],
   "priorityValues": ["P0", "P1", "P2"],
-  "areaValues": ["feature", "authentication", "security", "usability", "data", "platform"],
+  "areaValues": [
+    "feature",
+    "authentication",
+    "security",
+    "usability",
+    "data",
+    "operations",
+    "platform"
+  ],
+  "requirementValues": [
+    "RF-01",
+    "RF-02",
+    "RF-03",
+    "RF-04",
+    "RF-05",
+    "RF-06",
+    "RF-07",
+    "RNF-ARQ",
+    "RNF-SEG",
+    "RNF-A11Y",
+    "RNF-OBS"
+  ],
   "items": [
     {
       "id": "FEAT-001",
@@ -23,6 +46,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": [],
       "testCoverage": ["widget"]
     },
     {
@@ -41,6 +65,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": ["RF-05"],
       "testCoverage": ["widget"]
     },
     {
@@ -59,6 +84,7 @@
       ],
       "dependsOn": ["DATA-003"],
       "externalDependencies": [],
+      "requirements": ["RF-03"],
       "testCoverage": ["widget"]
     },
     {
@@ -77,6 +103,7 @@
       ],
       "dependsOn": ["FEAT-003"],
       "externalDependencies": [],
+      "requirements": ["RF-03"],
       "testCoverage": ["widget"]
     },
     {
@@ -95,6 +122,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": ["RF-03"],
       "testCoverage": ["unit", "widget"]
     },
     {
@@ -113,6 +141,7 @@
       ],
       "dependsOn": ["DATA-003"],
       "externalDependencies": [],
+      "requirements": ["RF-05"],
       "testCoverage": ["widget"]
     },
     {
@@ -131,6 +160,7 @@
       ],
       "dependsOn": ["DATA-003"],
       "externalDependencies": [],
+      "requirements": ["RF-04"],
       "testCoverage": ["widget"]
     },
     {
@@ -149,6 +179,7 @@
       ],
       "dependsOn": ["SEC-005"],
       "externalDependencies": [],
+      "requirements": [],
       "testCoverage": ["widget", "device_manual"]
     },
     {
@@ -167,7 +198,46 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": ["RF-04"],
       "testCoverage": ["unit", "widget"]
+    },
+    {
+      "id": "FEAT-010",
+      "title": "Alertas configuráveis",
+      "area": "feature",
+      "module": null,
+      "status": "planned",
+      "priority": "P2",
+      "owner": null,
+      "description": "Alertas para candidatos acompanhados, atualizações de apuração e etapas do calendário eleitoral, com opt-in por categoria e sem conteúdo promocional ou partidário.",
+      "acceptanceCriteria": [
+        "O usuário ativa e desativa cada categoria de alerta separadamente.",
+        "Cada alerta apresenta fonte, horário e caminho para consultar o dado completo.",
+        "A ausência de permissão de notificação não bloqueia o restante do aplicativo."
+      ],
+      "dependsOn": ["DATA-004"],
+      "externalDependencies": ["Serviço de push (FCM/APNs)"],
+      "requirements": ["RF-06"],
+      "testCoverage": ["widget", "integration"]
+    },
+    {
+      "id": "FEAT-011",
+      "title": "Relatos estruturados de fila e acessibilidade",
+      "area": "feature",
+      "module": "lib/features/local_votacao",
+      "status": "planned",
+      "priority": "P2",
+      "owner": null,
+      "description": "Envio de relatos estruturados sobre fila e acessibilidade no local de votação; todo relato inicia como pendente e só se torna público após pré-moderação humana.",
+      "acceptanceCriteria": [
+        "Um relato enviado não aparece imediatamente para outros usuários.",
+        "As categorias de relato são estruturadas (fila, acessibilidade); texto livre e mídia ficam fora desta fase.",
+        "O usuário pode denunciar um relato publicado e recebe confirmação da solicitação."
+      ],
+      "dependsOn": ["OPS-001"],
+      "externalDependencies": [],
+      "requirements": ["RF-07"],
+      "testCoverage": ["widget", "integration"]
     },
     {
       "id": "AUTH-001",
@@ -186,7 +256,27 @@
       ],
       "dependsOn": [],
       "externalDependencies": ["Firebase Authentication"],
+      "requirements": ["RF-01"],
       "testCoverage": ["unit", "widget", "device_manual"]
+    },
+    {
+      "id": "AUTH-002",
+      "title": "Consulta pública sem login e conta opcional",
+      "area": "authentication",
+      "module": "lib/features/auth",
+      "status": "planned",
+      "priority": "P0",
+      "owner": null,
+      "description": "Permitir consulta de conteúdo público sem autenticação e tornar a conta opcional; sincronização de dados pessoais apenas mediante consentimento, e credencial demo ausente na release pública.",
+      "acceptanceCriteria": [
+        "Um usuário não autenticado consulta todos os conteúdos públicos do escopo.",
+        "Itens salvos, preferências e alertas funcionam localmente sem conta.",
+        "A credencial demo não está disponível em build de produção."
+      ],
+      "dependsOn": ["AUTH-001"],
+      "externalDependencies": [],
+      "requirements": ["RF-01"],
+      "testCoverage": ["widget", "integration"]
     },
     {
       "id": "SEC-001",
@@ -204,6 +294,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": ["Definição de flavors Flutter", "Firebase Console"],
+      "requirements": ["RNF-SEG"],
       "testCoverage": ["build_configuration", "manual"]
     },
     {
@@ -222,6 +313,7 @@
       ],
       "dependsOn": ["SEC-001"],
       "externalDependencies": ["Firebase App Check"],
+      "requirements": ["RNF-SEG"],
       "testCoverage": ["device_manual", "console_validation"]
     },
     {
@@ -240,6 +332,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": ["Política de privacidade", "Definição jurídica/LGPD"],
+      "requirements": ["RF-01", "RNF-SEG"],
       "testCoverage": ["widget", "manual"]
     },
     {
@@ -258,6 +351,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": ["Provedor de CI"],
+      "requirements": ["RNF-SEG", "RNF-OBS"],
       "testCoverage": ["pipeline"]
     },
     {
@@ -276,6 +370,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": ["RNF-SEG"],
       "testCoverage": ["widget", "device_manual"]
     },
     {
@@ -294,6 +389,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": [],
+      "requirements": ["RNF-A11Y"],
       "testCoverage": ["widget", "device_manual"]
     },
     {
@@ -312,6 +408,7 @@
       ],
       "dependsOn": ["UX-001"],
       "externalDependencies": [],
+      "requirements": ["RNF-A11Y", "RNF-OBS"],
       "testCoverage": ["widget"]
     },
     {
@@ -330,6 +427,7 @@
       ],
       "dependsOn": ["AUTH-001"],
       "externalDependencies": [],
+      "requirements": ["RF-01"],
       "testCoverage": ["unit", "widget", "device_manual"]
     },
     {
@@ -348,6 +446,7 @@
       ],
       "dependsOn": ["SEC-003"],
       "externalDependencies": [],
+      "requirements": ["RF-01", "RNF-SEG"],
       "testCoverage": ["widget", "integration"]
     },
     {
@@ -366,6 +465,7 @@
       ],
       "dependsOn": [],
       "externalDependencies": ["Acesso a fontes oficiais"],
+      "requirements": ["RF-02"],
       "testCoverage": ["unit", "contract"]
     },
     {
@@ -384,6 +484,7 @@
       ],
       "dependsOn": ["DATA-001", "SEC-001", "SEC-002", "SEC-003"],
       "externalDependencies": [],
+      "requirements": ["RF-01", "RNF-SEG"],
       "testCoverage": ["integration", "security_rules"]
     },
     {
@@ -400,9 +501,48 @@
         "Cache local apresenta a última informação válida quando a rede falha.",
         "A interface identifica informações desatualizadas e oferece nova tentativa."
       ],
+      "dependsOn": ["DATA-001", "DATA-004"],
+      "externalDependencies": [],
+      "requirements": ["RF-03", "RF-04", "RF-05", "RNF-ARQ"],
+      "testCoverage": ["unit", "integration", "widget"]
+    },
+    {
+      "id": "DATA-004",
+      "title": "Modelo de proveniência e ação \"Por que confiar?\"",
+      "area": "data",
+      "module": null,
+      "status": "planned",
+      "priority": "P0",
+      "owner": null,
+      "description": "Modelar proveniência e confiabilidade no domínio (fonte, coleta, atualização, cobertura, frescor) e expor a ação \"Por que confiar?\" na UI, com estados de desatualizado/indisponível que não dependem apenas de cor.",
+      "acceptanceCriteria": [
+        "Todo item eleitoral carrega fonte, data de atualização, cobertura e estado de frescor no modelo de domínio.",
+        "A ação \"Por que confiar?\" está acessível no contexto do item e é anunciável por leitor de tela.",
+        "Dados fora da janela de frescor ou sem fonte aparecem como desatualizados/indisponíveis, sem valor fictício."
+      ],
       "dependsOn": ["DATA-001"],
       "externalDependencies": [],
-      "testCoverage": ["unit", "integration", "widget"]
+      "requirements": ["RF-02", "RNF-ARQ", "RNF-A11Y"],
+      "testCoverage": ["unit", "widget", "contract"]
+    },
+    {
+      "id": "OPS-001",
+      "title": "Operação editorial e fila de moderação",
+      "area": "operations",
+      "module": null,
+      "status": "planned",
+      "priority": "P1",
+      "owner": null,
+      "description": "Fila de moderação com aprovar, rejeitar, ocultar e remover, trilha de auditoria e política editorial operada pelo parceiro institucional.",
+      "acceptanceCriteria": [
+        "Moderadores decidem sobre relatos com registro de justificativa e responsável.",
+        "Toda decisão é auditável e reversível conforme a política editorial.",
+        "Correções editoriais preservam histórico e ficam identificáveis ao usuário."
+      ],
+      "dependsOn": ["DATA-002"],
+      "externalDependencies": ["Parceiro institucional", "Política editorial e SLA"],
+      "requirements": ["RF-05", "RF-07"],
+      "testCoverage": ["integration", "security_rules"]
     },
     {
       "id": "PLT-001",
@@ -420,7 +560,34 @@
       ],
       "dependsOn": ["SEC-001"],
       "externalDependencies": ["Apple Developer Program", "Google Play Console"],
+      "requirements": ["RNF-OBS"],
       "testCoverage": ["device_manual", "release_checklist"]
+    },
+    {
+      "id": "PLT-002",
+      "title": "Gate de lançamento do piloto na Paraíba",
+      "area": "platform",
+      "module": null,
+      "status": "blocked",
+      "priority": "P0",
+      "owner": null,
+      "description": "Checklist de gate para o piloto na Paraíba: proveniência completa, privacidade/consentimento/exclusão, operação de moderação com SLA, acessibilidade/offline/falha de fonte e configuração de produção.",
+      "acceptanceCriteria": [
+        "Nenhum dado eleitoral factual é publicado sem fonte oficial rastreável.",
+        "Política de privacidade, consentimentos e processo de exclusão estão disponíveis e testados.",
+        "Fluxos principais têm validação de acessibilidade, offline e falha de fonte, com ambientes e monitoramento de produção configurados."
+      ],
+      "dependsOn": [
+        "DATA-001",
+        "DATA-004",
+        "SEC-001",
+        "SEC-003",
+        "OPS-001",
+        "UX-001"
+      ],
+      "externalDependencies": ["Parceiro institucional"],
+      "requirements": ["RF-01", "RF-02", "RF-07", "RNF-SEG", "RNF-A11Y", "RNF-OBS"],
+      "testCoverage": ["release_checklist"]
     }
   ]
 }
